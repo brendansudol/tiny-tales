@@ -89,7 +89,7 @@ export function BookEditor({ book }: Props) {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="text-center md:text-left">
-                  <h2 className="text-lg font-bold text-purple-700">Let's start your book!</h2>
+                  <h2 className="text-lg font-bold text-purple-700">Let’s start your book!</h2>
                 </div>
 
                 <div className="relative min-h-[150px] p-4 bg-white border-2 border-dashed border-purple-300 rounded-lg">
@@ -206,7 +206,7 @@ export function BookEditor({ book }: Props) {
         <Button onClick={handleAddPage} variant="outline">
           <SquarePlus className="mr-1 h-4 w-4" /> Add page
         </Button>
-        <Button variant="outline">
+        <Button onClick={handleSaveBook} variant="outline">
           <BookText className="mr-1 h-4 w-4" /> Save book
         </Button>
       </div>
