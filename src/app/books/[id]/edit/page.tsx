@@ -16,7 +16,7 @@ export default function BookEditPage({ params }: Props) {
   const book = useMemo(() => getBook(id) ?? createEmptyBook(), [id])
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-6 max-w-2xl mx-auto">
       <Header />
       <BookEditor book={book} />
     </div>

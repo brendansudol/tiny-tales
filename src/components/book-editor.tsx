@@ -1,7 +1,6 @@
 "use client"
 
 import {
-  Square,
   Mic,
   Loader2,
   ImagePlus,
@@ -9,6 +8,7 @@ import {
   SquarePlus,
   ChevronLeft,
   ChevronRight,
+  CircleStop,
 } from "lucide-react"
 import { useState } from "react"
 import { v4 as uuid } from "uuid"
@@ -117,7 +117,7 @@ export function BookEditor({ book }: Props) {
                     size="icon"
                   >
                     {isRecording ? (
-                      <Square className="h-4 w-4" />
+                      <CircleStop className="h-4 w-4" />
                     ) : isLoadingTranscript ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
@@ -194,7 +194,7 @@ export function BookEditor({ book }: Props) {
             size="icon"
             className="rounded-full bg-white shadow-md h-10 w-10"
             onClick={() => setPageIndex((prev) => prev + 1)}
-            disabled={pageIndex === book.pages.length - 1}
+            disabled={pageIndex >= pagesDraft.length - 1}
           >
             <ChevronRight />
             <span className="sr-only">Next page</span>
