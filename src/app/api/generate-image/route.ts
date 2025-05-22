@@ -3,7 +3,7 @@ import { experimental_generateImage as generateImage } from "ai"
 import { openai } from "@ai-sdk/openai"
 
 // Run on the Edge – lower latency & no cold starts
-export const runtime = "edge"
+export const runtime = "nodejs"
 
 export async function POST(req: Request) {
   const { prompt } = await req.json()
