@@ -13,9 +13,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing 'file' in form data" }, { status: 400 })
     }
 
-    // Convert Blob to Uint8Array for transcribe()
     const audioArray = new Uint8Array(await file.arrayBuffer())
-
     const result = await transcribe({
       model: openai.transcription("whisper-1"),
       audio: audioArray,

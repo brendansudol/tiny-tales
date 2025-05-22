@@ -55,7 +55,7 @@ export function BookEditor({ book }: Props) {
         body: JSON.stringify({ prompt: caption }),
       })
       const data = await res.json()
-      setImageResult(data.base64)
+      setImageResult(data.url ?? data.base64)
     } catch (error) {
       console.error("Image generation fail", error)
     } finally {

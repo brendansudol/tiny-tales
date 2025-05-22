@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server"
 import { experimental_generateImage as generateImage } from "ai"
+import { v4 as uuid } from "uuid"
 import { openai } from "@ai-sdk/openai"
+import { put } from "@vercel/blob"
 
-// Run on the Edge – lower latency & no cold starts
 export const runtime = "nodejs"
 
 export async function POST(req: Request) {
@@ -19,7 +20,16 @@ export async function POST(req: Request) {
       size: "1024x1024",
     })
 
-    return NextResponse.json({ base64: image.base64 })
+    const { base64, mimeType } = image
+    const imageBuffer = Buffer.from(base64, "base64")
+    const fileName = `images/${uuid()}.png`
+
+    const { url } = await put(fileName, imageBuffer, {
+      contentType: mimeType,
+      access: "public",
+    })
+
+    return NextResponse.json({ base64: base64, url }, { status: 200 })
   } catch (err) {
     console.error(err)
     return NextResponse.json({ error: "Image generation failed." }, { status: 500 })
