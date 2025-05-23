@@ -17,6 +17,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Book, Page } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { useMicrophone } from "@/hooks/useMicrophone"
+import EditableText from "./editable-text"
 
 interface Props {
   book: Book
@@ -83,6 +84,8 @@ export function BookEditor({ book }: Props) {
 
   return (
     <div className="space-y-4">
+      <EditableText initialText="Click to edit this text" />
+
       <div className="relative">
         <Card className="p-0 overflow-hidden">
           <CardContent className="p-5">
