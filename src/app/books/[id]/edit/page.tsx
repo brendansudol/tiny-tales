@@ -18,7 +18,7 @@ export default function BookEditPage({ params }: Props) {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <Header />
-      <BookEditor book={book} />
+      <BookEditor key={book.id} book={book} />
     </div>
   )
 }

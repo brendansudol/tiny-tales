@@ -1,5 +1,6 @@
 "use client"
 
+import classNames from "classnames"
 import {
   Mic,
   Loader2,
@@ -17,7 +18,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Book, Page } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { useMicrophone } from "@/hooks/useMicrophone"
-import EditableText from "./editable-text"
+import { EditableText } from "./editable-text"
 
 interface Props {
   book: Book
@@ -26,6 +27,7 @@ interface Props {
 export function BookEditor({ book }: Props) {
   const [pagesDraft, setPagesDraft] = useState(() => [...book.pages])
   const [pageIndex, setPageIndex] = useState(0)
+  const [title, setTitle] = useState(book.title)
   const [caption, setCaption] = useState("")
   const [imageResult, setImageResult] = useState<string>()
   const [isLoadingImage, setIsLoadingImage] = useState(false)
@@ -84,7 +86,12 @@ export function BookEditor({ book }: Props) {
 
   return (
     <div className="space-y-4">
-      <EditableText initialText="Click to edit this text" />
+      <EditableText
+        className="font-semibold text-lg"
+        initialText={title}
+        onSave={setTitle}
+        placeholder="Add book title…"
+      />
 
       <div className="relative">
         <Card className="p-0 overflow-hidden">
@@ -151,7 +158,12 @@ export function BookEditor({ book }: Props) {
               </div>
 
               <div className="flex flex-col items-center justify-center">
-                <div className="w-full aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-purple-300 flex items-center justify-center">
+                <div
+                  className={classNames(
+                    "w-full aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-purple-300 flex items-center justify-center",
+                    { "animate-pulse": isLoadingImage }
+                  )}
+                >
                   {imageResult != null && imageResult !== "" ? (
                     <img
                       src={formatImageSrc(imageResult)}
