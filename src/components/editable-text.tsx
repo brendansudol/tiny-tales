@@ -121,7 +121,7 @@ export function EditableText({
           </span>
           {showEditIcon && (
             <Button variant="ghost" size="icon" onClick={handleStartEdit} className="h-8 w-8">
-              <PencilLine className="h-4 w-4 text-gray-500" />
+              <PencilLine className="h-4 w-4" />
             </Button>
           )}
         </div>

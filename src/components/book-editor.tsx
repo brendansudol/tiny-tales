@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleStop,
+  Trash2,
 } from "lucide-react"
 import { useReducer } from "react"
 import { v4 as uuid } from "uuid"
@@ -45,6 +46,7 @@ type Action =
   | { type: "SET_TITLE"; title: string }
   | { type: "SET_PAGE_INDEX"; pageIndex: number }
   | { type: "ADD_PAGE" }
+  | { type: "DELETE_PAGE"; pageIndex: number }
   | { type: "UPDATE_PAGE"; pageIndex: number; payload: Partial<PageDraft> }
 
 function reducer(state: State, action: Action): State {
@@ -60,6 +62,22 @@ function reducer(state: State, action: Action): State {
         ...state,
         pageIndex: action.pageIndex,
       }
+
+    case "DELETE_PAGE": {
+      if (state.pages.length <= 1) {
+        return {
+          ...state,
+          pages: [createEmptyPage()],
+          pageIndex: 0,
+        }
+      }
+
+      return {
+        ...state,
+        pages: state.pages.filter((_, idx) => idx !== action.pageIndex),
+        pageIndex: Math.max(0, action.pageIndex - 1),
+      }
+    }
 
     case "ADD_PAGE":
       return {
@@ -159,9 +177,9 @@ export function BookEditor({ book }: { book: Book }) {
   })
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <EditableText
-        className="font-semibold text-lg"
+        className="font-bold text-lg"
         initialText={state.title}
         onSave={(title) => dispatch({ type: "SET_TITLE", title })}
         placeholder="Add book title…"
@@ -172,8 +190,17 @@ export function BookEditor({ book }: { book: Book }) {
           <CardContent className="p-5">
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <div className="text-center md:text-left">
-                  <h2 className="text-lg font-bold text-purple-700">Page {state.pageIndex + 1}</h2>
+                <div className="flex items-baseline gap-2">
+                  <div className="text-md font-semibold">Page {state.pageIndex + 1}</div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 size-7"
+                    aria-label="Delete book"
+                    onClick={() => dispatch({ type: "DELETE_PAGE", pageIndex: state.pageIndex })}
+                  >
+                    <Trash2 className="size-[14px]" />
+                  </Button>
                 </div>
 
                 <div className="relative min-h-[150px] p-4 bg-white border-2 border-dashed border-purple-300 rounded-lg">
@@ -181,7 +208,11 @@ export function BookEditor({ book }: { book: Book }) {
                     <p>{captionText}</p>
                   ) : (
                     <p className="text-gray-400">
-                      {isRecording ? "I'm listening..." : "Press the microphone and start talking!"}
+                      {isRecording
+                        ? "I'm listening..."
+                        : isLoadingTranscript
+                        ? "Loading..."
+                        : "Press the microphone and start talking!"}
                     </p>
                   )}
 
@@ -292,9 +323,11 @@ export function BookEditor({ book }: { book: Book }) {
       </div>
 
       <div className="flex gap-2 justify-between items-center">
-        <Button onClick={() => dispatch({ type: "ADD_PAGE" })} variant="outline">
-          <SquarePlus className="mr-1 h-4 w-4" /> Add page
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => dispatch({ type: "ADD_PAGE" })} variant="outline">
+            <SquarePlus className="mr-1 h-4 w-4" /> Add page
+          </Button>
+        </div>
         <Button onClick={handleSaveBook} variant="outline">
           <BookText className="mr-1 h-4 w-4" /> Save book
         </Button>
