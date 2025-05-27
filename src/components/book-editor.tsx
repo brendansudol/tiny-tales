@@ -11,34 +11,100 @@ import {
   ChevronRight,
   CircleStop,
 } from "lucide-react"
-import { useState } from "react"
+import { useReducer } from "react"
 import { v4 as uuid } from "uuid"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import {
+  AsyncData,
+  asyncFailedToLoad,
+  asyncLoaded,
+  asyncLoading,
+  asyncNotStarted,
+  getValue,
+  isLoading,
+} from "@/lib/async-data"
 import { Book, Page } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { useMicrophone } from "@/hooks/useMicrophone"
 import { EditableText } from "./editable-text"
 
-interface Props {
-  book: Book
+interface PageDraft extends Omit<Page, "caption" | "image"> {
+  caption: AsyncData<string>
+  image: AsyncData<string>
 }
 
-export function BookEditor({ book }: Props) {
-  const [pagesDraft, setPagesDraft] = useState(() => [...book.pages])
-  const [pageIndex, setPageIndex] = useState(0)
-  const [title, setTitle] = useState(book.title)
-  const [caption, setCaption] = useState("")
-  const [imageResult, setImageResult] = useState<string>()
-  const [isLoadingImage, setIsLoadingImage] = useState(false)
-  const [isLoadingTranscript, setIsLoadingTranscript] = useState(false)
-  const [error, _setError] = useState<string>()
+interface State {
+  pages: PageDraft[]
+  pageIndex: number
+  title: string
+  error?: string
+}
 
-  const handleAddPage = () => {
-    const newPage: Page = { id: uuid(), caption: "", image: "" }
-    setPagesDraft((prev) => [...prev, newPage])
-    setCaption("")
-    setImageResult("")
+type Action =
+  | { type: "SET_TITLE"; title: string }
+  | { type: "SET_PAGE_INDEX"; pageIndex: number }
+  | { type: "ADD_PAGE" }
+  | { type: "UPDATE_PAGE"; pageIndex: number; payload: Partial<PageDraft> }
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "SET_TITLE":
+      return {
+        ...state,
+        title: action.title,
+      }
+
+    case "SET_PAGE_INDEX":
+      return {
+        ...state,
+        pageIndex: action.pageIndex,
+      }
+
+    case "ADD_PAGE":
+      return {
+        ...state,
+        pages: [...state.pages, createEmptyPage()],
+        pageIndex: state.pages.length,
+      }
+
+    case "UPDATE_PAGE":
+      return {
+        ...state,
+        pages: state.pages.map((page, idx) =>
+          idx === action.pageIndex ? { ...page, ...action.payload } : page
+        ),
+      }
+
+    default:
+      return state
+  }
+}
+
+export function BookEditor({ book }: { book: Book }) {
+  const [state, dispatch] = useReducer(reducer, {
+    pages:
+      book.pages.length === 0
+        ? [createEmptyPage()]
+        : book.pages.map((p) => ({
+            ...p,
+            caption: asyncLoaded(p.caption),
+            image: asyncLoaded(p.image),
+          })),
+    pageIndex: 0,
+    title: book.title,
+  })
+
+  const page = state.pages[state.pageIndex]
+  const canPrev = state.pageIndex > 0
+  const canNext = state.pageIndex < state.pages.length - 1
+  const isLoadingTranscript = isLoading(page.caption)
+  const isLoadingImage = isLoading(page.image)
+  const captionText = getValue(page.caption) ?? ""
+  const imageSrc = getValue(page.image)
+
+  const makePageUpdater = (idx: number) => (payload: Partial<PageDraft>) => {
+    dispatch({ type: "UPDATE_PAGE", pageIndex: idx, payload })
   }
 
   const handleSaveBook = () => {
@@ -48,21 +114,27 @@ export function BookEditor({ book }: Props) {
   }
 
   const handleGenerateImage = async () => {
-    if (caption.trim().length === 0) return
+    if (captionText.trim().length === 0 || isLoading(page.image)) return
+
+    const updatePage = makePageUpdater(state.pageIndex)
+    updatePage({ image: asyncLoading() })
 
     try {
-      setIsLoadingImage(true)
       const res = await fetch("/api/generate-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: caption }),
+        body: JSON.stringify({ prompt: captionText }),
       })
       const data = await res.json()
-      setImageResult(data.url ?? data.base64)
+      const imageUrl = data.url
+
+      // await sleep(8_000)
+      // const imageUrl = "/example/a.png"
+
+      updatePage({ image: asyncLoaded(imageUrl) })
     } catch (error) {
       console.error("Image generation fail", error)
-    } finally {
-      setIsLoadingImage(false)
+      updatePage({ image: asyncFailedToLoad("Image generation failed") })
     }
   }
 
@@ -71,15 +143,17 @@ export function BookEditor({ book }: Props) {
       const formData = new FormData()
       formData.append("file", blob, "recording.webm")
 
+      const updatePage = makePageUpdater(state.pageIndex)
+      updatePage({ caption: asyncLoading() })
+
       try {
-        setIsLoadingTranscript(true)
         const res = await fetch("/api/transcribe", { method: "POST", body: formData })
         const json = await res.json()
-        setCaption(json.transcript ?? "(No transcript available)")
+        const transcript = json.transcript ?? "(No transcript available)"
+        updatePage({ caption: asyncLoaded(transcript) })
       } catch (error) {
         console.error("Transcription fail", error)
-      } finally {
-        setIsLoadingTranscript(false)
+        updatePage({ caption: asyncFailedToLoad("Transcription failed") })
       }
     },
   })
@@ -88,8 +162,8 @@ export function BookEditor({ book }: Props) {
     <div className="space-y-4">
       <EditableText
         className="font-semibold text-lg"
-        initialText={title}
-        onSave={setTitle}
+        initialText={state.title}
+        onSave={(title) => dispatch({ type: "SET_TITLE", title })}
         placeholder="Add book title…"
       />
 
@@ -99,14 +173,12 @@ export function BookEditor({ book }: Props) {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="text-center md:text-left">
-                  <h2 className="text-lg font-bold text-purple-700">
-                    Let’s start your book! (page {pageIndex + 1})
-                  </h2>
+                  <h2 className="text-lg font-bold text-purple-700">Page {state.pageIndex + 1}</h2>
                 </div>
 
                 <div className="relative min-h-[150px] p-4 bg-white border-2 border-dashed border-purple-300 rounded-lg">
-                  {caption ? (
-                    <p>{caption}</p>
+                  {captionText.length > 0 ? (
+                    <p>{captionText}</p>
                   ) : (
                     <p className="text-gray-400">
                       {isRecording ? "I'm listening..." : "Press the microphone and start talking!"}
@@ -139,7 +211,7 @@ export function BookEditor({ book }: Props) {
 
                   <Button
                     onClick={handleGenerateImage}
-                    disabled={!caption.trim() || isLoadingImage}
+                    disabled={!captionText.trim() || isLoadingImage}
                     variant="outline"
                   >
                     {isLoadingImage ? (
@@ -164,10 +236,10 @@ export function BookEditor({ book }: Props) {
                     { "animate-pulse": isLoadingImage }
                   )}
                 >
-                  {imageResult != null && imageResult !== "" ? (
+                  {imageSrc ? (
                     <img
-                      src={formatImageSrc(imageResult)}
-                      alt={caption}
+                      src={formatImageSrc(imageSrc)}
+                      alt={captionText}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -184,9 +256,9 @@ export function BookEditor({ book }: Props) {
               </div>
             </div>
 
-            {error && (
+            {state.error && (
               <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md">
-                {error}
+                {state.error}
               </div>
             )}
           </CardContent>
@@ -197,8 +269,8 @@ export function BookEditor({ book }: Props) {
             variant="outline"
             size="icon"
             className="rounded-full bg-white shadow-md h-10 w-10"
-            onClick={() => setPageIndex((prev) => prev - 1)}
-            disabled={pageIndex === 0}
+            onClick={() => dispatch({ type: "SET_PAGE_INDEX", pageIndex: state.pageIndex - 1 })}
+            disabled={!canPrev || isRecording}
           >
             <ChevronLeft />
             <span className="sr-only">Previous page</span>
@@ -210,8 +282,8 @@ export function BookEditor({ book }: Props) {
             variant="outline"
             size="icon"
             className="rounded-full bg-white shadow-md h-10 w-10"
-            onClick={() => setPageIndex((prev) => prev + 1)}
-            disabled={pageIndex >= pagesDraft.length - 1}
+            onClick={() => dispatch({ type: "SET_PAGE_INDEX", pageIndex: state.pageIndex + 1 })}
+            disabled={!canNext || isRecording}
           >
             <ChevronRight />
             <span className="sr-only">Next page</span>
@@ -220,7 +292,7 @@ export function BookEditor({ book }: Props) {
       </div>
 
       <div className="flex gap-2 justify-between items-center">
-        <Button onClick={handleAddPage} variant="outline">
+        <Button onClick={() => dispatch({ type: "ADD_PAGE" })} variant="outline">
           <SquarePlus className="mr-1 h-4 w-4" /> Add page
         </Button>
         <Button onClick={handleSaveBook} variant="outline">
@@ -228,7 +300,7 @@ export function BookEditor({ book }: Props) {
         </Button>
       </div>
 
-      <pre>{JSON.stringify(pagesDraft, null, 2)}</pre>
+      <pre>{JSON.stringify(state.pages, null, 2)}</pre>
     </div>
   )
 }
@@ -237,4 +309,12 @@ export function BookEditor({ book }: Props) {
 function formatImageSrc(value: string) {
   if (value.startsWith("http") || value.startsWith("/")) return value
   else return `data:image/png;base64,${value}`
+}
+
+function createEmptyPage(): PageDraft {
+  return {
+    id: uuid(),
+    caption: asyncNotStarted(),
+    image: asyncNotStarted(),
+  }
 }
