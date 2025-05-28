@@ -10,12 +10,20 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleStop,
-  Trash2,
+  Settings2,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useReducer } from "react"
 import { v4 as uuid } from "uuid"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useMicrophone } from "@/hooks/useMicrophone"
 import {
   AsyncData,
   asyncFailedToLoad,
@@ -25,9 +33,9 @@ import {
   getValue,
   isLoading,
 } from "@/lib/async-data"
+import { upsertBook } from "@/lib/storage"
 import { Book, Page } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { useMicrophone } from "@/hooks/useMicrophone"
 import { EditableText } from "./editable-text"
 
 interface PageDraft extends Omit<Page, "caption" | "image"> {
@@ -118,17 +126,30 @@ export function BookEditor({ book }: { book: Book }) {
   const canNext = state.pageIndex < state.pages.length - 1
   const isLoadingTranscript = isLoading(page.caption)
   const isLoadingImage = isLoading(page.image)
-  const captionText = getValue(page.caption) ?? ""
+  const captionText = getValue(page.caption, "")
   const imageSrc = getValue(page.image)
+
+  const router = useRouter()
 
   const makePageUpdater = (idx: number) => (payload: Partial<PageDraft>) => {
     dispatch({ type: "UPDATE_PAGE", pageIndex: idx, payload })
   }
 
+  const handleDeleteCurrentPage = () => {
+    dispatch({ type: "DELETE_PAGE", pageIndex: state.pageIndex })
+  }
+
   const handleSaveBook = () => {
-    console.log("TODO: save book")
-    // upsertBook({ ...book, title, pages })
-    // router.push(`/`)
+    upsertBook({
+      ...book,
+      title: state.title,
+      pages: state.pages.map((page) => ({
+        ...page,
+        caption: getValue(page.caption, ""),
+        image: getValue(page.image, ""),
+      })),
+    })
+    router.push(`/`)
   }
 
   const handleGenerateImage = async () => {
@@ -190,17 +211,20 @@ export function BookEditor({ book }: { book: Book }) {
           <CardContent className="p-5">
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <div className="flex items-baseline gap-2">
+                <div className="flex items-center gap-2">
                   <div className="text-md font-semibold">Page {state.pageIndex + 1}</div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10 size-7"
-                    aria-label="Delete book"
-                    onClick={() => dispatch({ type: "DELETE_PAGE", pageIndex: state.pageIndex })}
-                  >
-                    <Trash2 className="size-[14px]" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="size-7">
+                        <Settings2 className="size-[14px]" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={handleDeleteCurrentPage}>
+                        Delete page
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <div className="relative min-h-[150px] p-4 bg-white border-2 border-dashed border-purple-300 rounded-lg">

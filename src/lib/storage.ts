@@ -12,7 +12,12 @@ export function getBooks(): Book[] {
     } catch (_) {}
   }
 
-  books.unshift(SAMPLE_BOOK)
+  if (books[0]?.id !== SAMPLE_BOOK.id) {
+    // If the sample book is not present, add it to the beginning of the list
+    // This ensures that the sample book is always available for new users
+    books = [SAMPLE_BOOK, ...books]
+  }
+
   return books
 }
 

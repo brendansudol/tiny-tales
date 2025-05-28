@@ -49,6 +49,8 @@ export function hasError<T, E>(state: AsyncData<T, E>): state is AsyncFailedToLo
   return state.status === "FAILED_TO_LOAD"
 }
 
-export function getValue<T, E>(state: AsyncData<T, E>): T | undefined {
-  return hasValue(state) ? state.data : undefined
+export function getValue<T, E>(state: AsyncData<T, E>): T | undefined
+export function getValue<T, E>(state: AsyncData<T, E>, fallback: T): T
+export function getValue<T, E>(state: AsyncData<T, E>, fallback?: T): T | undefined {
+  return hasValue(state) ? state.data : fallback
 }
