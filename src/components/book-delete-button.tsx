@@ -17,12 +17,14 @@ import { Button } from "./ui/button"
 
 interface Props {
   id: string
+  isIconOnly?: boolean
 }
 
-export function DeleteBookButton({ id }: Props) {
+export function DeleteBookButton({ id, isIconOnly = false }: Props) {
   const router = useRouter()
 
   const [open, setOpen] = useState(false)
+  const handleOpenConfirm = () => setOpen(true)
 
   const handleDelete = () => {
     const rest = getBooks().filter((b) => b.id !== id)
@@ -32,15 +34,21 @@ export function DeleteBookButton({ id }: Props) {
 
   return (
     <>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-        aria-label="Delete book"
-        onClick={() => setOpen(true)}
-      >
-        <Trash2 />
-      </Button>
+      {isIconOnly ? (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+          aria-label="Delete book"
+          onClick={handleOpenConfirm}
+        >
+          <Trash2 />
+        </Button>
+      ) : (
+        <Button onClick={handleOpenConfirm} variant="outline">
+          <Trash2 className="mr-1 h-4 w-4" /> Delete book
+        </Button>
+      )}
 
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogContent>

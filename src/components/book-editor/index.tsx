@@ -14,7 +14,7 @@ import {
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useReducer } from "react"
-import { v4 as uuid } from "uuid"
+import { EditableText } from "@/components/editable-text"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -24,102 +24,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useMicrophone } from "@/hooks/useMicrophone"
-import {
-  AsyncData,
-  asyncFailedToLoad,
-  asyncLoaded,
-  asyncLoading,
-  asyncNotStarted,
-  getValue,
-  isLoading,
-} from "@/lib/async-data"
+import { asyncFailedToLoad, asyncLoaded, asyncLoading, getValue, isLoading } from "@/lib/async-data"
 import { upsertBook } from "@/lib/storage"
-import { Book, Page } from "@/lib/types"
+import { Book } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { EditableText } from "./editable-text"
-
-interface PageDraft extends Omit<Page, "caption" | "image"> {
-  caption: AsyncData<string>
-  image: AsyncData<string>
-}
-
-interface State {
-  pages: PageDraft[]
-  pageIndex: number
-  title: string
-  error?: string
-}
-
-type Action =
-  | { type: "SET_TITLE"; title: string }
-  | { type: "SET_PAGE_INDEX"; pageIndex: number }
-  | { type: "ADD_PAGE" }
-  | { type: "DELETE_PAGE"; pageIndex: number }
-  | { type: "UPDATE_PAGE"; pageIndex: number; payload: Partial<PageDraft> }
-
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case "SET_TITLE":
-      return {
-        ...state,
-        title: action.title,
-      }
-
-    case "SET_PAGE_INDEX":
-      return {
-        ...state,
-        pageIndex: action.pageIndex,
-      }
-
-    case "DELETE_PAGE": {
-      if (state.pages.length <= 1) {
-        return {
-          ...state,
-          pages: [createEmptyPage()],
-          pageIndex: 0,
-        }
-      }
-
-      return {
-        ...state,
-        pages: state.pages.filter((_, idx) => idx !== action.pageIndex),
-        pageIndex: Math.max(0, action.pageIndex - 1),
-      }
-    }
-
-    case "ADD_PAGE":
-      return {
-        ...state,
-        pages: [...state.pages, createEmptyPage()],
-        pageIndex: state.pages.length,
-      }
-
-    case "UPDATE_PAGE":
-      return {
-        ...state,
-        pages: state.pages.map((page, idx) =>
-          idx === action.pageIndex ? { ...page, ...action.payload } : page
-        ),
-      }
-
-    default:
-      return state
-  }
-}
+import { getInitialState, PageDraft, reducer } from "./state"
 
 export function BookEditor({ book }: { book: Book }) {
-  const [state, dispatch] = useReducer(reducer, {
-    pages:
-      book.pages.length === 0
-        ? [createEmptyPage()]
-        : book.pages.map((p) => ({
-            ...p,
-            caption: asyncLoaded(p.caption),
-            image: asyncLoaded(p.image),
-          })),
-    pageIndex: 0,
-    title: book.title,
-  })
+  const [state, dispatch] = useReducer(reducer, getInitialState(book))
 
   const page = state.pages[state.pageIndex]
   const canPrev = state.pageIndex > 0
@@ -166,10 +78,6 @@ export function BookEditor({ book }: { book: Book }) {
       })
       const data = await res.json()
       const imageUrl = data.url
-
-      // await sleep(8_000)
-      // const imageUrl = "/example/a.png"
-
       updatePage({ image: asyncLoaded(imageUrl) })
     } catch (error) {
       console.error("Image generation fail", error)
@@ -198,19 +106,19 @@ export function BookEditor({ book }: { book: Book }) {
   })
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <EditableText
         className="font-bold text-lg"
         initialText={state.title}
         onSave={(title) => dispatch({ type: "SET_TITLE", title })}
-        placeholder="Add book title…"
+        placeholder="Add book title"
       />
 
-      <div className="relative">
+      <div className="mb-3 relative">
         <Card className="p-0 overflow-hidden">
           <CardContent className="p-5">
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="text-md font-semibold">Page {state.pageIndex + 1}</div>
                   <DropdownMenu>
@@ -287,8 +195,9 @@ export function BookEditor({ book }: { book: Book }) {
               <div className="flex flex-col items-center justify-center">
                 <div
                   className={classNames(
-                    "w-full aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-purple-300 flex items-center justify-center",
-                    { "animate-pulse": isLoadingImage }
+                    "w-full aspect-square bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center",
+                    { "animate-pulse": isLoadingImage },
+                    imageSrc ? "border" : "border-2 border-dashed border-purple-300"
                   )}
                 >
                   {imageSrc ? (
@@ -356,8 +265,6 @@ export function BookEditor({ book }: { book: Book }) {
           <BookText className="mr-1 h-4 w-4" /> Save book
         </Button>
       </div>
-
-      <pre>{JSON.stringify(state.pages, null, 2)}</pre>
     </div>
   )
 }
@@ -366,12 +273,4 @@ export function BookEditor({ book }: { book: Book }) {
 function formatImageSrc(value: string) {
   if (value.startsWith("http") || value.startsWith("/")) return value
   else return `data:image/png;base64,${value}`
-}
-
-function createEmptyPage(): PageDraft {
-  return {
-    id: uuid(),
-    caption: asyncNotStarted(),
-    image: asyncNotStarted(),
-  }
 }

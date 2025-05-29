@@ -17,6 +17,7 @@ export function BookViewer({ book }: Props) {
 
   const { pages } = book
   const currentPage = pages[pageIndex]
+  const { caption, image } = currentPage
 
   if (pages.length === 0) {
     return (
@@ -27,26 +28,23 @@ export function BookViewer({ book }: Props) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="relative">
+    <div className="space-y-3">
+      <div className="font-bold text-lg">{book.title}</div>
+
+      <div className="mb-4 relative">
         <Card className="overflow-hidden p-0">
           <CardContent className="p-0">
             <div className="grid md:grid-cols-2">
-              <div className="aspect-square">
-                <img
-                  src={currentPage.image}
-                  alt={currentPage.caption}
-                  className="w-full h-full object-cover"
-                />
+              <div className="aspect-square bg-gray-100">
+                {image && <img src={image} alt={caption} className="w-full h-full object-cover" />}
               </div>
               <div className="p-6 flex flex-col justify-center">
                 <div className="mb-4 text-center md:text-left">
                   <span className="text-sm text-gray-500">
                     Page {pageIndex + 1} of {pages.length}
                   </span>
-                  <h2 className="text-2xl font-bold text-purple-700">My Story</h2>
                 </div>
-                <p className="text-lg leading-relaxed">{currentPage.caption}</p>
+                <p className="text-lg leading-relaxed">{caption || "(No words yet)"}</p>
               </div>
             </div>
           </CardContent>
@@ -79,12 +77,9 @@ export function BookViewer({ book }: Props) {
         </div>
       </div>
 
-      <div className="flex gap-1 justify-end items-center">
-        <Link
-          href={`/books/${book.id}/edit`}
-          className={buttonVariants({ size: "icon", variant: "ghost" })}
-        >
-          <Edit />
+      <div className="flex gap-3 items-center">
+        <Link href={`/books/${book.id}/edit`} className={buttonVariants({ variant: "outline" })}>
+          <Edit /> Make changes
         </Link>
         <DeleteBookButton id={book.id} />
       </div>
