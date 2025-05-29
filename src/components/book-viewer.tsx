@@ -34,17 +34,21 @@ export function BookViewer({ book }: Props) {
       <div className="mb-4 relative">
         <Card className="overflow-hidden p-0">
           <CardContent className="p-0">
-            <div className="grid md:grid-cols-2">
+            <div className="grid md:grid-cols-2 md:aspect-2/1">
               <div className="aspect-square bg-gray-100">
                 {image && <img src={image} alt={caption} className="w-full h-full object-cover" />}
               </div>
-              <div className="p-6 flex flex-col justify-center">
-                <div className="mb-4 text-center md:text-left">
+              <div className="p-6 pt-8 relative h-full overflow-auto">
+                <div className="absolute top-0 right-0 px-3 py-2">
                   <span className="text-sm text-gray-500">
-                    Page {pageIndex + 1} of {pages.length}
+                    {pageIndex + 1} of {pages.length}
                   </span>
                 </div>
-                <p className="text-lg leading-relaxed">{caption || "(No words yet)"}</p>
+                <div className="min-h-full flex flex-col justify-center">
+                  <p className="text-lg leading-relaxed whitespace-pre-line">
+                    {caption || "(No words yet)"}
+                  </p>
+                </div>
               </div>
             </div>
           </CardContent>

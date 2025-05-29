@@ -3,7 +3,6 @@
 TODO:
 
 - handle no page books (create initial experience)
-- refine caption / page number placement on view page
 - confetti on save?
 - make caption text box editable (textarea probably)
 - fix import ordering
@@ -11,6 +10,7 @@ TODO:
 - revamp record button
 - Add "about this" dialog
 - rate limiting?
+- go to view book page on edit save
 
 ---
 
@@ -20,3 +20,4 @@ DONE:
 - remove JSON from book-editor bottom
 - move book-editor state to separate file
 - fallback image/color for empty string for view-book
+- refine caption / page number placement on view page
