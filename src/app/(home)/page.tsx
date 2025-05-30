@@ -17,7 +17,7 @@ export default function Home() {
             <Link
               key={book.id}
               href={`/books/${book.id}`}
-              className="p-4 rounded-xl border flex flex-col"
+              className="p-4 rounded-xl bg-white border flex flex-col"
             >
               {book.title || "Untitled"}
             </Link>

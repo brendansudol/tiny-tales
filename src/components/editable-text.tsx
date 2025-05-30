@@ -96,7 +96,7 @@ export function EditableText({
       />
 
       {isEditing ? (
-        <div className="inline-flex items-center gap-2">
+        <div className="inline-flex items-center gap-1">
           <input
             ref={inputRef}
             type="text"
@@ -112,7 +112,7 @@ export function EditableText({
           </Button>
         </div>
       ) : (
-        <div className="inline-flex items-center">
+        <div className="inline-flex items-center gap-1">
           <span
             onClick={handleStartEdit}
             className="cursor-pointer hover:bg-gray-100 px-2 py-1 rounded-md border border-transparent hover:border-gray-200 transition-colors"

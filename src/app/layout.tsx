@@ -25,7 +25,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#fcfcfc]`}>
+        {children}
+      </body>
     </html>
   )
 }

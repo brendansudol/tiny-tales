@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { LibraryBig, Plus } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
+import { AboutThis } from "@/components/about-this"
 
 export function Header() {
   return (
@@ -9,6 +10,7 @@ export function Header() {
         📚 tiny tales
       </Link>
       <div className="flex items-center gap-2">
+        <AboutThis />
         <Link href="/" className={buttonVariants({ size: "icon", variant: "outline" })}>
           <LibraryBig className="h-5 w-5" />
         </Link>

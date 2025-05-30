@@ -23,6 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Textarea } from "@/components/ui/textarea"
 import { useMicrophone } from "@/hooks/useMicrophone"
 import { asyncFailedToLoad, asyncLoaded, asyncLoading, getValue, isLoading } from "@/lib/async-data"
 import { upsertBook } from "@/lib/storage"
@@ -51,6 +52,14 @@ export function BookEditor({ book }: { book: Book }) {
     dispatch({ type: "DELETE_PAGE", pageIndex: state.pageIndex })
   }
 
+  const handleChangeCaption = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    dispatch({
+      type: "UPDATE_PAGE",
+      pageIndex: state.pageIndex,
+      payload: { caption: asyncLoaded(e.target.value) },
+    })
+  }
+
   const handleSaveBook = () => {
     upsertBook({
       ...book,
@@ -61,7 +70,7 @@ export function BookEditor({ book }: { book: Book }) {
         image: getValue(page.image, ""),
       })),
     })
-    router.push(`/`)
+    router.push(`/books/${book.id}`)
   }
 
   const handleGenerateImage = async () => {
@@ -121,33 +130,36 @@ export function BookEditor({ book }: { book: Book }) {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="text-md font-semibold">Page {state.pageIndex + 1}</div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="size-7">
-                        <Settings2 className="size-[14px]" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={handleDeleteCurrentPage}>
-                        Delete page
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  {state.pages.length > 1 && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="size-7">
+                          <Settings2 className="size-[14px]" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={handleDeleteCurrentPage}>
+                          Delete page
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </div>
 
-                <div className="relative min-h-[150px] p-4 bg-white border-2 border-dashed border-purple-300 rounded-lg">
-                  {captionText.length > 0 ? (
-                    <p>{captionText}</p>
-                  ) : (
-                    <p className="text-gray-400">
-                      {isRecording
+                <div className="relative">
+                  <Textarea
+                    className="resize-none h-[150px] p-4 border-2 border-dashed border-purple-300 focus-visible:ring-purple-300/50 rounded-lg disabled:opacity-80 md:text-base"
+                    placeholder="Press the microphone and start talking!"
+                    disabled={isRecording || isLoadingTranscript}
+                    onChange={handleChangeCaption}
+                    value={
+                      isRecording
                         ? "I'm listening..."
                         : isLoadingTranscript
                         ? "Loading..."
-                        : "Press the microphone and start talking!"}
-                    </p>
-                  )}
-
+                        : captionText
+                    }
+                  />
                   <div
                     className={cn(
                       "absolute bottom-2 right-2 h-4 w-4 rounded-full",
