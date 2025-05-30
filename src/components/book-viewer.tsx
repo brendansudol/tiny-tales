@@ -1,12 +1,13 @@
 "use client"
 
-import { ChevronLeft, ChevronRight, Edit } from "lucide-react"
+import { ChevronLeft, ChevronRight, Edit, Share } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Book } from "@/lib/types"
 import { DeleteBookButton } from "./book-delete-button"
+import { shareBookPdf } from "@/lib/share-book-pdf"
 
 interface Props {
   book: Book
@@ -82,6 +83,9 @@ export function BookViewer({ book }: Props) {
       </div>
 
       <div className="flex gap-3 items-center">
+        <Button variant="outline" aria-label="Share book" onClick={() => shareBookPdf(book)}>
+          <Share /> Share
+        </Button>
         <Link href={`/books/${book.id}/edit`} className={buttonVariants({ variant: "outline" })}>
           <Edit /> Make changes
         </Link>

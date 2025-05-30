@@ -8,8 +8,6 @@ TODO:
 - better book card for homepage
 - revamp record button
 - rate limiting?
-- go to view book page on edit save
-- export / share book
 - "about this" content
 - better loading image experience (maybe a game?)
 
@@ -24,3 +22,5 @@ DONE:
 - refine caption / page number placement on view page
 - make caption text box editable (textarea probably)
 - Add "about this" dialog
+- export / share book
+- go to view book page on edit save
