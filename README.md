@@ -6,7 +6,6 @@ TODO:
 - confetti on save?
 - fix import ordering
 - better book card for homepage
-- revamp record button
 - rate limiting?
 - "about this" content
 - better loading image experience (maybe a game?)
@@ -24,3 +23,4 @@ DONE:
 - Add "about this" dialog
 - export / share book
 - go to view book page on edit save
+- revamp record button

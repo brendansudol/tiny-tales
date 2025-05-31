@@ -2,14 +2,12 @@
 
 import classNames from "classnames"
 import {
-  Mic,
   Loader2,
   ImagePlus,
   BookText,
   SquarePlus,
   ChevronLeft,
   ChevronRight,
-  CircleStop,
   Settings2,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -28,8 +26,8 @@ import { useMicrophone } from "@/hooks/useMicrophone"
 import { asyncFailedToLoad, asyncLoaded, asyncLoading, getValue, isLoading } from "@/lib/async-data"
 import { upsertBook } from "@/lib/storage"
 import { Book } from "@/lib/types"
-import { cn } from "@/lib/utils"
 import { getInitialState, PageDraft, reducer } from "./state"
+import { RecordButton } from "../record-button"
 
 export function BookEditor({ book }: { book: Book }) {
   const [state, dispatch] = useReducer(reducer, getInitialState(book))
@@ -146,43 +144,26 @@ export function BookEditor({ book }: { book: Book }) {
                   )}
                 </div>
 
-                <div className="relative">
-                  <Textarea
-                    className="resize-none h-[150px] p-4 border-2 border-dashed border-purple-300 focus-visible:ring-purple-300/50 rounded-lg disabled:opacity-80 md:text-base"
-                    placeholder="Press the microphone and start talking!"
-                    disabled={isRecording || isLoadingTranscript}
-                    onChange={handleChangeCaption}
-                    value={
-                      isRecording
-                        ? "I'm listening..."
-                        : isLoadingTranscript
-                        ? "Loading..."
-                        : captionText
-                    }
-                  />
-                  <div
-                    className={cn(
-                      "absolute bottom-2 right-2 h-4 w-4 rounded-full",
-                      isRecording ? "bg-red-500 animate-pulse" : "bg-gray-300"
-                    )}
-                  />
-                </div>
+                <Textarea
+                  className="resize-none h-[150px] p-4 border-2 border-dashed border-purple-300 focus-visible:ring-purple-300/50 rounded-lg disabled:opacity-80 md:text-base"
+                  placeholder="Press the microphone and start talking!"
+                  disabled={isRecording || isLoadingTranscript}
+                  onChange={handleChangeCaption}
+                  value={
+                    isRecording
+                      ? "I'm listening..."
+                      : isLoadingTranscript
+                      ? "Loading..."
+                      : captionText
+                  }
+                />
 
                 <div className="flex justify-between gap-4">
-                  <Button
-                    disabled={isLoadingTranscript}
+                  <RecordButton
+                    isLoading={isLoadingTranscript}
+                    isRecording={isRecording}
                     onClick={toggleRecording}
-                    variant="outline"
-                    size="icon"
-                  >
-                    {isRecording ? (
-                      <CircleStop className="h-4 w-4" />
-                    ) : isLoadingTranscript ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Mic className="h-4 w-4" />
-                    )}
-                  </Button>
+                  />
 
                   <Button
                     onClick={handleGenerateImage}
