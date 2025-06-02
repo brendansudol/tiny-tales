@@ -18,6 +18,9 @@ export async function POST(req: Request) {
       model: openai.image("gpt-image-1"),
       prompt,
       size: "1024x1024",
+      providerOptions: {
+        openai: { quality: "medium" },
+      },
     })
 
     const { base64, mimeType } = image

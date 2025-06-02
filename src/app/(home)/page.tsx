@@ -12,7 +12,7 @@ export default function Home() {
       <Header />
       {books.length === 0 && <p className="text-sm text-center text-gray-500">No books yet</p>}
       {books.length > 0 && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid sm:grid-cols-2 gap-4">
           {books.map((book) => (
             <Link
               key={book.id}

@@ -8,7 +8,6 @@ TODO:
 - better book card for homepage
 - rate limiting?
 - "about this" content
-- better loading image experience (maybe a game?)
 
 ---
 
@@ -24,3 +23,4 @@ DONE:
 - export / share book
 - go to view book page on edit save
 - revamp record button
+- better loading image experience (maybe a game?)

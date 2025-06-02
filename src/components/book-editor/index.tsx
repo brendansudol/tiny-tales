@@ -1,6 +1,5 @@
 "use client"
 
-import classNames from "classnames"
 import {
   Loader2,
   ImagePlus,
@@ -23,11 +22,19 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
 import { useMicrophone } from "@/hooks/useMicrophone"
-import { asyncFailedToLoad, asyncLoaded, asyncLoading, getValue, isLoading } from "@/lib/async-data"
+import {
+  asyncFailedToLoad,
+  asyncLoaded,
+  asyncLoading,
+  getLoadingInfo,
+  getValue,
+  isLoading,
+} from "@/lib/async-data"
 import { upsertBook } from "@/lib/storage"
 import { Book } from "@/lib/types"
 import { getInitialState, PageDraft, reducer } from "./state"
 import { RecordButton } from "../record-button"
+import { AsyncImage } from "../async-image"
 
 export function BookEditor({ book }: { book: Book }) {
   const [state, dispatch] = useReducer(reducer, getInitialState(book))
@@ -36,9 +43,9 @@ export function BookEditor({ book }: { book: Book }) {
   const canPrev = state.pageIndex > 0
   const canNext = state.pageIndex < state.pages.length - 1
   const isLoadingTranscript = isLoading(page.caption)
-  const isLoadingImage = isLoading(page.image)
+  const { isLoading: isLoadingImage, startedAt } = getLoadingInfo(page.image)
   const captionText = getValue(page.caption, "")
-  const imageSrc = getValue(page.image)
+  const imageUrl = getValue(page.image)
 
   const router = useRouter()
 
@@ -146,7 +153,7 @@ export function BookEditor({ book }: { book: Book }) {
 
                 <Textarea
                   className="resize-none h-[150px] p-4 border-2 border-dashed border-purple-300 focus-visible:ring-purple-300/50 rounded-lg disabled:opacity-80 md:text-base"
-                  placeholder="Press the microphone and start talking!"
+                  placeholder="Press the microphone and start talking."
                   disabled={isRecording || isLoadingTranscript}
                   onChange={handleChangeCaption}
                   value={
@@ -186,30 +193,12 @@ export function BookEditor({ book }: { book: Book }) {
               </div>
 
               <div className="flex flex-col items-center justify-center">
-                <div
-                  className={classNames(
-                    "w-full aspect-square bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center",
-                    { "animate-pulse": isLoadingImage },
-                    imageSrc ? "border" : "border-2 border-dashed border-purple-300"
-                  )}
-                >
-                  {imageSrc ? (
-                    <img
-                      src={formatImageSrc(imageSrc)}
-                      alt={captionText}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-center p-4">
-                      <ImagePlus className="h-12 w-12 mx-auto text-gray-400 mb-2" />
-                      <p className="text-sm text-gray-500">
-                        {isLoadingImage
-                          ? "Creating your picture..."
-                          : "Your picture will appear here"}
-                      </p>
-                    </div>
-                  )}
-                </div>
+                <AsyncImage
+                  alt={captionText}
+                  imageUrl={imageUrl}
+                  isLoading={isLoadingImage}
+                  startedAt={startedAt}
+                />
               </div>
             </div>
 
@@ -260,10 +249,4 @@ export function BookEditor({ book }: { book: Book }) {
       </div>
     </div>
   )
-}
-
-// TODO: refine this
-function formatImageSrc(value: string) {
-  if (value.startsWith("http") || value.startsWith("/")) return value
-  else return `data:image/png;base64,${value}`
 }
