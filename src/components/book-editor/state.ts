@@ -71,7 +71,7 @@ export function reducer(state: State, action: Action): State {
   }
 }
 
-export function getInitialState(book: Book): State {
+export function getInitialState(book: Book, pageIndex: number): State {
   return {
     pages:
       book.pages.length === 0
@@ -81,7 +81,7 @@ export function getInitialState(book: Book): State {
             caption: asyncLoaded(page.caption),
             image: asyncLoaded(page.image),
           })),
-    pageIndex: 0,
+    pageIndex: Math.max(0, Math.min(pageIndex, book.pages.length - 1)),
     title: book.title,
   }
 }

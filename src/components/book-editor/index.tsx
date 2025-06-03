@@ -36,8 +36,8 @@ import { getInitialState, PageDraft, reducer } from "./state"
 import { RecordButton } from "../record-button"
 import { AsyncImage } from "../async-image"
 
-export function BookEditor({ book }: { book: Book }) {
-  const [state, dispatch] = useReducer(reducer, getInitialState(book))
+export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: number }) {
+  const [state, dispatch] = useReducer(reducer, getInitialState(book, pageIndex))
 
   const page = state.pages[state.pageIndex]
   const canPrev = state.pageIndex > 0
@@ -71,11 +71,12 @@ export function BookEditor({ book }: { book: Book }) {
       title: state.title,
       pages: state.pages.map((page) => ({
         ...page,
-        caption: getValue(page.caption, ""),
+        caption: getValue(page.caption, "").trim(),
         image: getValue(page.image, ""),
       })),
     })
-    router.push(`/books/${book.id}`)
+
+    router.push(`/books/${book.id}?celebrate=1`)
   }
 
   const handleGenerateImage = async () => {

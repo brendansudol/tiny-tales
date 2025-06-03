@@ -2,10 +2,14 @@
 
 import Link from "next/link"
 import { Header } from "@/components/header"
-import { getBooks } from "@/lib/storage"
+import { getValue } from "@/lib/async-data"
+import { useGetBooks } from "@/hooks/useBooks"
 
 export default function Home() {
-  const books = getBooks()
+  const booksAsync = useGetBooks()
+  const books = getValue(booksAsync)
+
+  if (books == null) return null
 
   return (
     <div className="p-6 max-w-2xl mx-auto">

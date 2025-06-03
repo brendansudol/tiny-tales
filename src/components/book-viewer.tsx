@@ -90,7 +90,10 @@ export function BookViewer({ book }: Props) {
             <Share /> Share
           </Button>
         )}
-        <Link href={`/books/${book.id}/edit`} className={buttonVariants({ variant: "outline" })}>
+        <Link
+          href={`/books/${book.id}/edit?page=${pageIndex}`}
+          className={buttonVariants({ variant: "outline" })}
+        >
           <Edit /> Make changes
         </Link>
         <DeleteBookButton id={book.id} />

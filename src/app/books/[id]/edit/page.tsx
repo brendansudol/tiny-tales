@@ -1,11 +1,12 @@
 "use client"
 
 import { use, useMemo } from "react"
-import { v4 as uuid } from "uuid"
 import { BookEditor } from "@/components/book-editor"
 import { Header } from "@/components/header"
-import { getBook } from "@/lib/storage"
-import { Book } from "@/lib/types"
+import { createEmptyBook } from "@/lib/create-empty-book"
+import { useGetBook } from "@/hooks/useBooks"
+import { getValue, isReady } from "@/lib/async-data"
+import { useSearchParams } from "next/navigation"
 
 interface Props {
   params: Promise<{ id: string }>
@@ -13,21 +14,20 @@ interface Props {
 
 export default function BookEditPage({ params }: Props) {
   const { id } = use(params)
-  const book = useMemo(() => getBook(id) ?? createEmptyBook(), [id])
+
+  const bookAsync = useGetBook(id)
+  const existingBook = getValue(bookAsync)
+  const book = useMemo(() => existingBook ?? createEmptyBook(), [existingBook])
+
+  const searchParams = useSearchParams()
+  const pageIndex = Number(searchParams.get("page")) || 0
+
+  if (!isReady(bookAsync)) return null
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <Header />
-      <BookEditor key={book.id} book={book} />
+      <BookEditor key={book.id} book={book} pageIndex={pageIndex} />
     </div>
   )
-}
-
-function createEmptyBook(): Book {
-  return {
-    id: uuid(),
-    title: "",
-    pages: [],
-    createdAt: Date.now(),
-  }
 }

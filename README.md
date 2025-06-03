@@ -3,11 +3,12 @@
 TODO:
 
 - handle no page books (create initial experience)
-- confetti on save?
 - fix import ordering
 - better book card for homepage
 - rate limiting?
 - "about this" content
+- remove pages with no caption and no image
+- fix placement of prev/next buttons on mobile
 
 ---
 
@@ -24,3 +25,6 @@ DONE:
 - go to view book page on edit save
 - revamp record button
 - better loading image experience (maybe a game?)
+- confetti on save?
+- fix hydration issues
+- go to current page when editing
