@@ -1,14 +1,6 @@
 "use client"
 
-import {
-  Loader2,
-  ImagePlus,
-  BookText,
-  SquarePlus,
-  ChevronLeft,
-  ChevronRight,
-  Settings2,
-} from "lucide-react"
+import { Loader2, ImagePlus, BookText, SquarePlus, Settings2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useReducer } from "react"
 import { EditableText } from "@/components/editable-text"
@@ -35,13 +27,12 @@ import { Book } from "@/lib/types"
 import { getInitialState, PageDraft, reducer } from "./state"
 import { RecordButton } from "../record-button"
 import { AsyncImage } from "../async-image"
+import { BookNavButtons } from "../book-nav-buttons"
 
 export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: number }) {
   const [state, dispatch] = useReducer(reducer, getInitialState(book, pageIndex))
 
   const page = state.pages[state.pageIndex]
-  const canPrev = state.pageIndex > 0
-  const canNext = state.pageIndex < state.pages.length - 1
   const isLoadingTranscript = isLoading(page.caption)
   const { isLoading: isLoadingImage, startedAt } = getLoadingInfo(page.image)
   const captionText = getValue(page.caption, "")
@@ -69,11 +60,13 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
     upsertBook({
       ...book,
       title: state.title,
-      pages: state.pages.map((page) => ({
-        ...page,
-        caption: getValue(page.caption, "").trim(),
-        image: getValue(page.image, ""),
-      })),
+      pages: state.pages
+        .map((page) => ({
+          ...page,
+          caption: getValue(page.caption, "").trim(),
+          image: getValue(page.image, ""),
+        }))
+        .filter((page) => page.caption || page.image),
     })
 
     router.push(`/books/${book.id}?celebrate=1`)
@@ -211,31 +204,12 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
           </CardContent>
         </Card>
 
-        <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-5">
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full bg-white shadow-md h-10 w-10"
-            onClick={() => dispatch({ type: "SET_PAGE_INDEX", pageIndex: state.pageIndex - 1 })}
-            disabled={!canPrev || isRecording}
-          >
-            <ChevronLeft />
-            <span className="sr-only">Previous page</span>
-          </Button>
-        </div>
-
-        <div className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-5">
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full bg-white shadow-md h-10 w-10"
-            onClick={() => dispatch({ type: "SET_PAGE_INDEX", pageIndex: state.pageIndex + 1 })}
-            disabled={!canNext || isRecording}
-          >
-            <ChevronRight />
-            <span className="sr-only">Next page</span>
-          </Button>
-        </div>
+        <BookNavButtons
+          prevDisabled={state.pageIndex === 0 || isRecording}
+          prevOnClick={() => dispatch({ type: "SET_PAGE_INDEX", pageIndex: state.pageIndex - 1 })}
+          nextDisabled={state.pageIndex === state.pages.length - 1 || isRecording}
+          nextOnClick={() => dispatch({ type: "SET_PAGE_INDEX", pageIndex: state.pageIndex + 1 })}
+        />
       </div>
 
       <div className="flex gap-2 justify-between items-center">

@@ -2,13 +2,11 @@
 
 TODO:
 
-- handle no page books (create initial experience)
 - fix import ordering
 - better book card for homepage
 - rate limiting?
 - "about this" content
-- remove pages with no caption and no image
-- fix placement of prev/next buttons on mobile
+- dismissable welcome message on homepage
 
 ---
 
@@ -28,3 +26,6 @@ DONE:
 - confetti on save?
 - fix hydration issues
 - go to current page when editing
+- fix placement of prev/next buttons on mobile
+- handle no page books (create initial experience)
+- remove pages with no caption and no image

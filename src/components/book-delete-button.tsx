@@ -46,7 +46,9 @@ export function DeleteBookButton({ id, isIconOnly = false }: Props) {
         </Button>
       ) : (
         <Button onClick={handleOpenConfirm} variant="outline">
-          <Trash2 className="mr-1 h-4 w-4" /> Delete book
+          <Trash2 className="mr-1 h-4 w-4" />
+          <span className="sm:hidden">Delete</span>
+          <span className="hidden sm:inline">Delete book</span>
         </Button>
       )}
 

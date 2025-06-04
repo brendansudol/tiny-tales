@@ -1,7 +1,7 @@
 import { jsPDF } from "jspdf"
 import { Book } from "./types"
 
-export async function shareBookPdf(book: Book) {
+export async function shareBookAsPdf(book: Book) {
   const pdf = new jsPDF({ orientation: "p", unit: "pt", format: "a4" })
   const pageWidth = pdf.internal.pageSize.getWidth()
   const pageHeight = pdf.internal.pageSize.getHeight()
