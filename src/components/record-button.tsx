@@ -1,7 +1,7 @@
 "use client"
 
 import { Loader2, Mic, MicOff } from "lucide-react"
-import { Button } from "./ui/button"
+import { Button } from "@/components/ui/button"
 
 interface Props {
   isLoading?: boolean
@@ -20,7 +20,6 @@ export function RecordButton({ isLoading, isRecording, onClick }: Props) {
           <div className="absolute -inset-4 rounded-full bg-red-200 animate-ping opacity-5 animation-delay-300" />
         </>
       )}
-
       <Button
         disabled={isLoading}
         onClick={onClick}

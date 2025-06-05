@@ -2,11 +2,14 @@
 
 TODO:
 
-- fix import ordering
 - better book card for homepage
 - rate limiting?
 - "about this" content
 - dismissable welcome message on homepage
+- buy domain name
+- add to bren homepage
+- improve and ship share feature
+- README.md
 
 ---
 
@@ -29,3 +32,5 @@ DONE:
 - fix placement of prev/next buttons on mobile
 - handle no page books (create initial experience)
 - remove pages with no caption and no image
+- new favicon
+- fix import ordering

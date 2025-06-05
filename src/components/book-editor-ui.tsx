@@ -3,7 +3,11 @@
 import { Loader2, ImagePlus, BookText, SquarePlus, Settings2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useReducer } from "react"
+import { AsyncImage } from "@/components/async-image"
+import { getInitialState, PageDraft, reducer } from "@/components/book-editor-state"
+import { BookNavButtons } from "@/components/book-nav-buttons"
 import { EditableText } from "@/components/editable-text"
+import { RecordButton } from "@/components/record-button"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -24,21 +28,16 @@ import {
 } from "@/lib/async-data"
 import { upsertBook } from "@/lib/storage"
 import { Book } from "@/lib/types"
-import { getInitialState, PageDraft, reducer } from "./state"
-import { RecordButton } from "../record-button"
-import { AsyncImage } from "../async-image"
-import { BookNavButtons } from "../book-nav-buttons"
 
 export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: number }) {
-  const [state, dispatch] = useReducer(reducer, getInitialState(book, pageIndex))
+  const router = useRouter()
 
+  const [state, dispatch] = useReducer(reducer, getInitialState(book, pageIndex))
   const page = state.pages[state.pageIndex]
   const isLoadingTranscript = isLoading(page.caption)
   const { isLoading: isLoadingImage, startedAt } = getLoadingInfo(page.image)
   const captionText = getValue(page.caption, "")
   const imageUrl = getValue(page.image)
-
-  const router = useRouter()
 
   const makePageUpdater = (idx: number) => (payload: Partial<PageDraft>) => {
     dispatch({ type: "UPDATE_PAGE", pageIndex: idx, payload })

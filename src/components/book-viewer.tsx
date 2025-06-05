@@ -3,12 +3,12 @@
 import { Edit, Share } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
+import { DeleteBookButton } from "@/components/book-delete-button"
+import { BookNavButtons } from "@/components/book-nav-buttons"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Book } from "@/lib/types"
-import { DeleteBookButton } from "./book-delete-button"
 import { shareBookAsImage } from "@/lib/share-book-image"
-import { BookNavButtons } from "./book-nav-buttons"
+import { Book } from "@/lib/types"
 
 const SHOULD_SHOW_SHARE_BUTTON = false
 

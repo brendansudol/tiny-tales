@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getBook, getBooks } from "@/lib/storage"
 import { AsyncData, asyncLoaded, asyncLoading } from "@/lib/async-data"
+import { getBook, getBooks } from "@/lib/storage"
 import { Book } from "@/lib/types"
 
 export function useGetBooks() {

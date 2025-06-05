@@ -1,5 +1,8 @@
 "use client"
 
+import { Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import {
   AlertDialog,
   AlertDialogContent,
@@ -9,11 +12,8 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
-import { Trash2 } from "lucide-react"
-import { useState } from "react"
+import { Button } from "@/components/ui/button"
 import { getBooks, saveBooks } from "@/lib/storage"
-import { useRouter } from "next/navigation"
-import { Button } from "./ui/button"
 
 interface Props {
   id: string
@@ -57,9 +57,7 @@ export function DeleteBookButton({ id, isIconOnly = false }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this book?</AlertDialogTitle>
           </AlertDialogHeader>
-
           <p className="mb-4 text-sm text-gray-500">Are you sure you want to delete this book?</p>
-
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction

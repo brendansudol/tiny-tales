@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react"
 import classNames from "classnames"
 import { ImagePlus } from "lucide-react"
+import React, { useState, useEffect } from "react"
 
 interface Props {
   alt: string

@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react"
 import { Check, PencilLine } from "lucide-react"
-import { Button } from "./ui/button"
+import React, { useState, useRef, useEffect } from "react"
+import { Button } from "@/components/ui/button"
 
 interface Props {
   initialText: string

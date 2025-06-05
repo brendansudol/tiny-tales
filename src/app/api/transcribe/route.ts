@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const formData = await request.formData()
     const file = formData.get("file")
 
-    if (!file || !(file instanceof Blob)) {
+    if (file == null || !(file instanceof Blob)) {
       return NextResponse.json({ error: "Missing 'file' in form data" }, { status: 400 })
     }
 
@@ -17,7 +17,6 @@ export async function POST(request: Request) {
     const result = await transcribe({
       model: openai.transcription("whisper-1"),
       audio: audioArray,
-      // providerOptions: { openai: { timestampGranularities: ["word"] } }, // optional
     })
 
     return NextResponse.json({ transcript: result.text })

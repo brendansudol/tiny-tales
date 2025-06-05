@@ -1,12 +1,12 @@
 "use client"
 
+import { useSearchParams } from "next/navigation"
 import { use, useMemo } from "react"
-import { BookEditor } from "@/components/book-editor"
+import { BookEditor } from "@/components/book-editor-ui"
 import { Header } from "@/components/header"
-import { createEmptyBook } from "@/lib/create-empty-book"
 import { useGetBook } from "@/hooks/useBooks"
 import { getValue, isReady } from "@/lib/async-data"
-import { useSearchParams } from "next/navigation"
+import { createEmptyBook } from "@/lib/create-empty-book"
 
 interface Props {
   params: Promise<{ id: string }>

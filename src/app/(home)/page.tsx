@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import { Header } from "@/components/header"
-import { getValue } from "@/lib/async-data"
 import { useGetBooks } from "@/hooks/useBooks"
+import { getValue } from "@/lib/async-data"
 
 export default function Home() {
   const booksAsync = useGetBooks()

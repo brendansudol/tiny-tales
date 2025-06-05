@@ -3,27 +3,20 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 
 interface Args {
-  /** Maximum recording duration in milliseconds (default: 2 minutes). */
   maxDurationMs?: number
-  /** Callback fired with the recorded audio Blob once `stop()` completes. */
   onAudioReady?: (blob: Blob) => void
 }
 
 interface Return {
   isRecording: boolean
-  /** Normalised RMS audio level (0‑1) for visual meters. */
-  audioLevel: number
-  /** Elapsed recording time in seconds (reset to 0 when not recording). */
+  audioLevel: number // Normalised RMS audio level (0‑1) for visual meters.
   elapsedSeconds: number
-  /** Begin recording (prompts for mic permission on first run). */
   startRecording: () => Promise<void>
-  /** Stop recording (can be called before the max duration elapses). */
   stopRecording: () => void
-  /** Toggle recording state (start/stop). */
   toggleRecording: () => void
 }
 
-export function useMicrophone({ maxDurationMs = 120_000, onAudioReady }: Args = {}): Return {
+export function useMicrophone({ maxDurationMs = 60_000, onAudioReady }: Args = {}): Return {
   const [isRecording, setIsRecording] = useState(false)
   const [audioLevel, setAudioLevel] = useState(0)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)

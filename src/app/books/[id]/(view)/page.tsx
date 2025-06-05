@@ -4,9 +4,9 @@ import { notFound, usePathname, useRouter, useSearchParams } from "next/navigati
 import { use, useEffect } from "react"
 import { BookViewer } from "@/components/book-viewer"
 import { Header } from "@/components/header"
-import { celebrate } from "@/lib/confetti"
 import { useGetBook } from "@/hooks/useBooks"
 import { getValue, isReady } from "@/lib/async-data"
+import { celebrate } from "@/lib/confetti"
 
 interface Props {
   params: Promise<{ id: string }>
