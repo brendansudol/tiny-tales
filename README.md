@@ -3,13 +3,9 @@
 TODO:
 
 - better book card for homepage
-- rate limiting?
-- "about this" content
-- dismissable welcome message on homepage
-- buy domain name
+- about copy/content throughout (about this, announcement, readme)
 - add to bren homepage
 - improve and ship share feature
-- README.md
 
 ---
 
@@ -34,3 +30,7 @@ DONE:
 - remove pages with no caption and no image
 - new favicon
 - fix import ordering
+- buy domain name
+- dismissable welcome message on homepage
+- preload all/most images on book view page?
+- rate limiting?

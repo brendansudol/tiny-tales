@@ -2,7 +2,7 @@
 
 import { Edit, Share } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { DeleteBookButton } from "@/components/book-delete-button"
 import { BookNavButtons } from "@/components/book-nav-buttons"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -22,6 +22,18 @@ export function BookViewer({ book }: Props) {
   const { pages } = book
   const currentPage = pages[pageIndex]
   const { caption, image } = currentPage ?? {}
+
+  useEffect(() => {
+    // preload the current and next page images (for smoother navigation)
+    const currentAndNextPages = [pageIndex, pageIndex + 1]
+    currentAndNextPages
+      .filter((i) => i < pages.length && pages[i].image.length > 0) // stay in-bounds
+      .forEach((i) => {
+        const img = new Image()
+        img.crossOrigin = "anonymous"
+        img.src = pages[i].image
+      })
+  }, [pageIndex, pages])
 
   if (pages.length === 0) {
     return (

@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { AnnouncementBanner } from "@/components/annoucement-banner"
 import { Header } from "@/components/header"
 import { useGetBooks } from "@/hooks/useBooks"
 import { getValue } from "@/lib/async-data"
@@ -14,6 +15,7 @@ export default function Home() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <Header />
+      <AnnouncementBanner />
       {books.length === 0 && <p className="text-sm text-center text-gray-500">No books yet</p>}
       {books.length > 0 && (
         <div className="grid sm:grid-cols-2 gap-4">
