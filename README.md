@@ -2,10 +2,10 @@
 
 TODO:
 
-- about copy/content throughout (about this, announcement, readme)
 - add to bren homepage
 - improve and ship share feature
 - check/fix text overflow to title input / throughout app
+- image overflow on book view page
 
 ---
 
@@ -35,3 +35,4 @@ DONE:
 - preload all/most images on book view page?
 - rate limiting?
 - better book card for homepage
+- about copy/content throughout (about this, announcement, readme)

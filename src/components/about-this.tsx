@@ -17,14 +17,37 @@ export function AboutThis() {
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>About this</DialogTitle>
+        <DialogTitle>About</DialogTitle>
         <DialogDescription>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-          ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-          sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-          est laborum.
+          <p className="mb-3">
+            Tiny Tales is a playful canvas for young storytellers. Kids speak their idea for each
+            page, and our friendly AI turns those words into pictures.
+          </p>
+          <p className="mb-3">
+            Every book lives only in this browser. Nothing is uploaded or shared unless you choose
+            to, so children can create freely and safely.
+          </p>
+          <div className="flex gap-2 text-xs text-black">
+            <a
+              href="https://github.com/brendansudol/tiny-tales"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              Code on GitHub
+            </a>
+
+            <span>//</span>
+
+            <a
+              href="https://www.brendansudol.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              Made by @brensudol
+            </a>
+          </div>
         </DialogDescription>
       </DialogContent>
     </Dialog>
