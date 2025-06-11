@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { AnnouncementBanner } from "@/components/annoucement-banner"
+import { AnnouncementBanner } from "@/components/announcement-banner"
 import { Header } from "@/components/header"
 import { useGetBooks } from "@/hooks/useBooks"
 import { getValue } from "@/lib/async-data"

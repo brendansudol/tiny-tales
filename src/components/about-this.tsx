@@ -37,7 +37,7 @@ export function AboutThis() {
               Code on GitHub
             </a>
 
-            <span>//</span>
+            <span>{"//"}</span>
 
             <a
               href="https://www.brendansudol.com/"
