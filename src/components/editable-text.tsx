@@ -112,7 +112,7 @@ export function EditableText({
           </Button>
         </div>
       ) : (
-        <div className="inline-flex items-center gap-1">
+        <div className="inline-flex items-center gap-1 max-w-full">
           <span
             onClick={handleStartEdit}
             className="cursor-pointer hover:bg-gray-100 px-2 py-1 rounded-md border border-transparent hover:border-gray-200 transition-colors max-w-full truncate"
