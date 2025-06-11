@@ -4,8 +4,6 @@ TODO:
 
 - add to bren homepage
 - improve and ship share feature
-- check/fix text overflow to title input / throughout app
-- image overflow on book view page
 
 ---
 
@@ -36,3 +34,5 @@ DONE:
 - rate limiting?
 - better book card for homepage
 - about copy/content throughout (about this, announcement, readme)
+- image overflow on book view page
+- check/fix text overflow to title input / throughout app

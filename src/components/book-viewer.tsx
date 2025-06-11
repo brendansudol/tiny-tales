@@ -56,8 +56,14 @@ export function BookViewer({ book }: Props) {
       <Card className=" mb-4 p-0 relative">
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2 md:aspect-2/1">
-            <div className="max-sm:relative aspect-square bg-gray-100">
-              {image && <img src={image} alt={caption} className="w-full h-full object-cover" />}
+            <div className="max-sm:relative aspect-square bg-gray-100 card-inner-radius">
+              {image && (
+                <img
+                  src={image}
+                  alt={caption}
+                  className="w-full h-full object-cover card-inner-radius"
+                />
+              )}
               <BookNavButtons
                 prevDisabled={pageIndex === 0}
                 prevOnClick={() => setPageIndex((prev) => prev - 1)}

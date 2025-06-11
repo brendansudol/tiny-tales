@@ -82,7 +82,7 @@ export function EditableText({
   }
 
   return (
-    <div className={`inline-block ${className}`}>
+    <div className={`inline-block max-w-full ${className ?? ""}`}>
       {/* Hidden element for measuring text width */}
       <span
         ref={measureRef}
@@ -96,7 +96,7 @@ export function EditableText({
       />
 
       {isEditing ? (
-        <div className="inline-flex items-center gap-1">
+        <div className="inline-flex items-center gap-1 max-w-full">
           <input
             ref={inputRef}
             type="text"
@@ -105,7 +105,7 @@ export function EditableText({
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             className={`border border-purple-300 rounded-md px-2 py-1 outline-none focus:border-purple-500 ${inputClassName}`}
-            style={{ width: `${inputWidth}px` }}
+            style={{ width: `${inputWidth}px`, maxWidth: "100%" }}
           />
           <Button variant="ghost" size="icon" onClick={handleSave} className="h-8 w-8">
             <Check className="h-4 w-4" />
@@ -115,7 +115,7 @@ export function EditableText({
         <div className="inline-flex items-center gap-1">
           <span
             onClick={handleStartEdit}
-            className="cursor-pointer hover:bg-gray-100 px-2 py-1 rounded-md border border-transparent hover:border-gray-200 transition-colors"
+            className="cursor-pointer hover:bg-gray-100 px-2 py-1 rounded-md border border-transparent hover:border-gray-200 transition-colors max-w-full truncate"
           >
             {text || placeholder}
           </span>

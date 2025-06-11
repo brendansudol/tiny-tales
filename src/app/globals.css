@@ -125,3 +125,22 @@
 body {
   @apply font-mono;
 }
+
+/* for book viewer card inner image rounded-ness
+   (with absolutely positioned nav buttons)
+*/
+.card-inner-radius {
+  border-top-left-radius: calc(theme("borderRadius.xl") - 1px);
+  border-top-right-radius: calc(theme("borderRadius.xl") - 1px);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+@media (min-width: theme("screens.md")) {
+  .card-inner-radius {
+    border-top-left-radius: calc(theme("borderRadius.xl") - 1px);
+    border-bottom-left-radius: calc(theme("borderRadius.xl") - 1px);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
