@@ -10,8 +10,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { shareBookAsImage } from "@/lib/share-book-image"
 import { Book } from "@/lib/types"
 
-const SHOULD_SHOW_SHARE_BUTTON = false
-
 interface Props {
   book: Book
 }
@@ -88,11 +86,10 @@ export function BookViewer({ book }: Props) {
       </Card>
 
       <div className="flex gap-3 items-center">
-        {SHOULD_SHOW_SHARE_BUTTON && (
-          <Button variant="outline" aria-label="Share book" onClick={() => shareBookAsImage(book)}>
-            <Share /> Share
-          </Button>
-        )}
+        <Button variant="outline" aria-label="Share book" onClick={() => shareBookAsImage(book)}>
+          <Share className="mr-1" />
+          <span>Share</span>
+        </Button>
         <Link
           href={`/books/${book.id}/edit?page=${pageIndex}`}
           className={buttonVariants({ variant: "outline" })}

@@ -2,15 +2,23 @@ import { Book, Page } from "@/lib/types"
 
 /**
  * Combine all pages of a book into one tall PNG and invoke the Web Share API
- * (or fallback to a download). Throws on failure.
+ * (or fall back to a download).
  */
-export async function shareBookAsImage(book: Book): Promise<void> {
-  const PAGE_WIDTH = 800 // px
-  const PADDING = 40
+export async function shareBookAsImage(
+  book: Book,
+  opts: { showCaptions?: boolean; textColor?: string } = {}
+): Promise<void> {
+  /* ───────── Config ───────── */
+  const PAGE_WIDTH = 800 // px (output width)
+  const PADDING = 40 // horizontal padding for text
   const CAPTION_FONT = "20px sans-serif"
-  const LINE_HEIGHT = 28
+  const PAGE_NUM_FONT = "20px sans-serif"
+  const PAGE_NUM_MARGIN = 20
+  const CAPTION_MARGIN_BOTTOM = 20
+  const TEXT_COLOR = opts.textColor ?? "#000"
+  const SHOW_CAPTIONS = opts.showCaptions ?? true
 
-  // 1. Preload images & compute individual heights
+  /* ─── 1. Pre-load & scale images ─── */
   const loadedPages: Array<
     Page & { img: HTMLImageElement | null; scale: number; imgHeight: number }
   > = await Promise.all(
@@ -22,71 +30,70 @@ export async function shareBookAsImage(book: Book): Promise<void> {
     })
   )
 
-  // Temporary canvas for caption measurement
-  const measureCanvas = document.createElement("canvas")
-  const measureCtx = measureCanvas.getContext("2d") as CanvasRenderingContext2D
-  measureCtx.font = CAPTION_FONT
-
-  let totalHeight = 0
-  loadedPages.forEach(({ caption, imgHeight }) => {
-    let lines = 1
-    let line = ""
-    caption.split(" ").forEach((w) => {
-      const test = line + w + " "
-      if (measureCtx.measureText(test).width > PAGE_WIDTH - PADDING * 2) {
-        lines++
-        line = w + " "
-      } else {
-        line = test
-      }
-    })
-    totalHeight += imgHeight + lines * LINE_HEIGHT + 40 // 40px gap
-  })
+  /* ─── 2. Canvas sizing ─── */
+  const totalHeight = loadedPages.reduce((sum, { imgHeight }) => sum + imgHeight, 0)
 
   const canvas = document.createElement("canvas")
   canvas.width = PAGE_WIDTH
   canvas.height = totalHeight
   const ctx = canvas.getContext("2d") as CanvasRenderingContext2D
+
+  /* White background */
   ctx.fillStyle = "#fff"
   ctx.fillRect(0, 0, PAGE_WIDTH, totalHeight)
-  ctx.font = CAPTION_FONT
-  ctx.fillStyle = "#000"
 
-  // 2. Render pages sequentially
+  /* ─── 3. Render each page ─── */
   let yOffset = 0
-  for (const { caption, img, imgHeight } of loadedPages) {
+  loadedPages.forEach(({ img, imgHeight, caption }, pageIdx) => {
+    // Draw scaled image
     if (img) ctx.drawImage(img, 0, yOffset, PAGE_WIDTH, imgHeight)
-    yOffset += imgHeight + 20 // gap before caption
-    yOffset = drawWrappedText(ctx, caption, PADDING, yOffset, PAGE_WIDTH - PADDING * 2, LINE_HEIGHT)
-    yOffset += 20 // gap after caption
-  }
 
-  // 3. Convert to blob & share
-  const blob = await new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob(
-      (b) => (b ? resolve(b) : reject(new Error("blob conversion failed"))),
-      "image/png"
-    )
+    // Page number
+    ctx.font = PAGE_NUM_FONT
+    ctx.fillStyle = TEXT_COLOR
+    ctx.textAlign = "right"
+    ctx.textBaseline = "top"
+    ctx.fillText(String(pageIdx + 1), PAGE_WIDTH - PAGE_NUM_MARGIN, yOffset + PAGE_NUM_MARGIN)
+
+    // Caption (bottom overlay)
+    if (SHOW_CAPTIONS && caption) {
+      ctx.font = CAPTION_FONT
+      ctx.fillStyle = TEXT_COLOR
+      ctx.textAlign = "left"
+      ctx.textBaseline = "bottom"
+      const maxCaptionWidth = PAGE_WIDTH - PADDING * 2
+      const singleLine = truncateToFit(ctx, caption, maxCaptionWidth)
+      ctx.fillText(singleLine, PADDING, yOffset + imgHeight - CAPTION_MARGIN_BOTTOM)
+    }
+
+    // Move y-cursor to start of next image (no extra gap)
+    yOffset += imgHeight
   })
+
+  /* ─── 4. Convert to PNG & share ─── */
+  const blob: Blob = await new Promise((res, rej) =>
+    canvas.toBlob((b) => (b ? res(b) : rej(new Error("blob conversion failed"))))
+  )
 
   const file = new File([blob], `${book.title}.png`, { type: "image/png" })
 
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+  if (navigator.canShare?.({ files: [file] })) {
     await navigator.share({
       title: book.title,
-      text: `Enjoy my Tiny Tales story \"${book.title}\"`,
+      text: `Enjoy my Tiny Tales story "${book.title}"`,
       files: [file],
     })
   } else {
+    /* Fallback: trigger download */
     const url = URL.createObjectURL(file)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = file.name
+    const a = Object.assign(document.createElement("a"), {
+      href: url,
+      download: file.name,
+    })
     document.body.appendChild(a)
     a.click()
     a.remove()
     URL.revokeObjectURL(url)
-    alert("Image downloaded – share it from your files app!")
   }
 }
 
@@ -100,32 +107,13 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   })
 }
 
-/**
- * Draw text onto a canvas context, automatically wrapping when the next
- * word would exceed `maxWidth`.
- * Returns the next y-coordinate (top of the following line).
- */
-function drawWrappedText(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  maxWidth: number,
-  lineHeight: number
-): number {
-  const words = text.split(" ")
-  let line = ""
-  for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + " "
-    const metrics = ctx.measureText(testLine)
-    if (metrics.width > maxWidth && n > 0) {
-      ctx.fillText(line.trim(), x, y)
-      line = words[n] + " "
-      y += lineHeight
-    } else {
-      line = testLine
-    }
+/** Truncate `text` so it fits in `maxWidth`, appending “…” if needed. */
+function truncateToFit(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
+  if (ctx.measureText(text).width <= maxWidth) return text
+
+  let trimmed = text
+  while (trimmed.length && ctx.measureText(`${trimmed}…`).width > maxWidth) {
+    trimmed = trimmed.slice(0, -1)
   }
-  ctx.fillText(line.trim(), x, y)
-  return y + lineHeight
+  return `${trimmed.trim()}…`
 }
