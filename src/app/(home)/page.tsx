@@ -38,7 +38,7 @@ function BookCard({ book }: { book: Book }) {
   return (
     <Link
       href={`/books/${book.id}`}
-      className="p-4 rounded-xl bg-white border group block shrink-0"
+      className="p-3 rounded-xl bg-white border group block shrink-0"
     >
       <div className="flex">
         <div className="mr-4 shrink-0">
@@ -64,7 +64,7 @@ function BookCard({ book }: { book: Book }) {
         </div>
         <div>
           <h4>{book.title || "Untitled"}</h4>
-          <p className="mt-1 text-xs text-gray-500">{`${pageCount} ${pageText}`}</p>
+          <p className="text-xs text-gray-500">{`${pageCount} ${pageText}`}</p>
         </div>
       </div>
     </Link>

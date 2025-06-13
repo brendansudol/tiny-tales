@@ -37,7 +37,7 @@ function PlaceholderContent({ isLoading }: { isLoading: boolean }) {
     <div className="text-center p-4">
       <ImagePlus className="h-12 w-12 mx-auto text-gray-400 mb-2" />
       <p className="text-sm text-gray-500">
-        {isLoading ? "Creating your picture..." : "Your picture will goes here."}
+        {isLoading ? "Creating your picture..." : "Your picture will go here."}
       </p>
     </div>
   )
@@ -65,8 +65,7 @@ function useElapsedSeconds(startedAt: number, resolutionMs = 1_000) {
   return seconds
 }
 
-// TODO: refine and/or move this
-function formatImageSrc(value: string) {
+function formatImageSrc(value: string): string {
   if (value.startsWith("http") || value.startsWith("/")) return value
   else return `data:image/png;base64,${value}`
 }

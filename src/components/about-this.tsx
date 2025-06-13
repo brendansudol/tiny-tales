@@ -19,14 +19,14 @@ export function AboutThis() {
       <DialogContent>
         <DialogTitle>About</DialogTitle>
         <DialogDescription>
-          <p className="mb-3">
+          <div className="mb-3">
             Tiny Tales is a playful canvas for young storytellers. Kids speak their idea for each
             page, and our friendly AI turns those words into pictures.
-          </p>
-          <p className="mb-3">
+          </div>
+          <div className="mb-3">
             Every book lives only in this browser. Nothing is uploaded or shared unless you choose
             to, so children can create freely and safely.
-          </p>
+          </div>
           <div className="flex gap-2 text-xs text-black">
             <a
               href="https://github.com/brendansudol/tiny-tales"

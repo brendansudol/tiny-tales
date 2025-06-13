@@ -121,6 +121,7 @@ export function useMicrophone({ maxDurationMs = 60_000, onAudioReady }: Args = {
   // Clean‑up if the component using the hook unmounts
   useEffect(() => {
     return () => stop()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return {

@@ -1,4 +1,4 @@
-import { SAMPLE_BOOK } from "@/lib/sample-data"
+import { EXAMPLE_BOOK } from "@/lib/sample-data"
 import { Book } from "@/lib/types"
 
 const KEY = "tiny-tales"
@@ -12,13 +12,7 @@ export function getBooks(): Book[] {
     } catch (_) {}
   }
 
-  if (books[0]?.id !== SAMPLE_BOOK.id) {
-    // If the sample book is not present, add it to the beginning of the list
-    // This ensures that the sample book is always available for new users
-    books = [SAMPLE_BOOK, ...books]
-  }
-
-  return books
+  return books.length === 0 ? [EXAMPLE_BOOK] : books
 }
 
 export function getBook(id: string): Book | undefined {

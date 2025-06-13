@@ -1,22 +1,22 @@
 import { Book } from "@/lib/types"
 
-export const SAMPLE_BOOK: Book = {
-  id: "sample-book",
-  title: "Sample Book",
+export const EXAMPLE_BOOK: Book = {
+  id: "example",
+  title: "Alphabet Fun",
   pages: [
     {
-      id: "sample-page-1",
-      caption: "Sample Page 1",
+      id: "page-1",
+      caption: "A cartoon of the letter A drinking coffee.",
       image: "/example/a.png",
     },
     {
-      id: "sample-page-2",
-      caption: "Sample Page 2",
+      id: "page-2",
+      caption: "A cartoon of the letter B drinking milk.",
       image: "/example/b.png",
     },
     {
-      id: "sample-page-3",
-      caption: "Sample Page 3",
+      id: "page-3",
+      caption: "A cartoon of the letter C watching TV.",
       image: "/example/c.png",
     },
   ],
