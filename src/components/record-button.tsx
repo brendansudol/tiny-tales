@@ -4,12 +4,13 @@ import { Loader2, Mic, MicOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface Props {
+  isDisabled?: boolean
   isLoading?: boolean
   isRecording: boolean
   onClick: () => void
 }
 
-export function RecordButton({ isLoading, isRecording, onClick }: Props) {
+export function RecordButton({ isDisabled, isLoading, isRecording, onClick }: Props) {
   return (
     <div className="relative">
       {isRecording && (
@@ -21,7 +22,7 @@ export function RecordButton({ isLoading, isRecording, onClick }: Props) {
         </>
       )}
       <Button
-        disabled={isLoading}
+        disabled={isDisabled || isLoading}
         onClick={onClick}
         variant={isRecording ? "destructive" : "outline"}
         size="icon"

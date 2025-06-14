@@ -18,35 +18,37 @@ export function AboutThis() {
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>About</DialogTitle>
-        <DialogDescription>
-          <div className="mb-3">
-            Tiny Tales is a playful canvas for young storytellers. Kids speak their idea for each
-            page, and our friendly AI turns those words into pictures.
-          </div>
-          <div className="mb-3">
-            Every book lives only in this browser. Nothing is uploaded or shared unless you choose
-            to, so children can create freely and safely.
-          </div>
-          <div className="flex gap-2 text-xs text-black">
-            <a
-              href="https://github.com/brendansudol/tiny-tales"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              Code on GitHub
-            </a>
+        <DialogDescription asChild>
+          <div>
+            <div className="mb-3">
+              Tiny Tales is a playful canvas for young storytellers. Kids speak their idea for each
+              page, and our friendly AI turns those words into pictures.
+            </div>
+            <div className="mb-3">
+              Every book lives only in this browser. Nothing is uploaded or shared unless you choose
+              to, so children can create freely and safely.
+            </div>
+            <div className="flex gap-2 text-xs text-black">
+              <a
+                href="https://github.com/brendansudol/tiny-tales"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                Code on GitHub
+              </a>
 
-            <span>{"//"}</span>
+              <span>{"//"}</span>
 
-            <a
-              href="https://www.brendansudol.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              Made by @brensudol
-            </a>
+              <a
+                href="https://www.brendansudol.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                Made by @brensudol
+              </a>
+            </div>
           </div>
         </DialogDescription>
       </DialogContent>

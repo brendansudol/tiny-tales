@@ -160,6 +160,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
 
                 <div className="flex justify-between gap-4">
                   <RecordButton
+                    isDisabled={isLoadingImage}
                     isLoading={isLoadingTranscript}
                     isRecording={isRecording}
                     onClick={toggleRecording}

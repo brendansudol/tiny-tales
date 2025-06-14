@@ -1,8 +1,8 @@
 import { Book, Page } from "@/lib/types"
 
 /**
- * Combine all pages of a book into one tall PNG and invoke the Web Share API
- * (or fall back to a download).
+ * Combine all pages of a book into one tall PNG and invoke the
+ * Web Share API (or fall back to a download).
  */
 export async function shareBookAsImage(
   book: Book,
@@ -11,10 +11,10 @@ export async function shareBookAsImage(
   /* ───────── Config ───────── */
   const PAGE_WIDTH = 800 // px (output width)
   const PADDING = 40 // horizontal padding for text
-  const CAPTION_FONT = "20px sans-serif"
+  const CAPTION_FONT = "16px sans-serif"
   const PAGE_NUM_FONT = "20px sans-serif"
   const PAGE_NUM_MARGIN = 20
-  const CAPTION_MARGIN_BOTTOM = 20
+  const CAPTION_MARGIN_BOTTOM = 10
   const TEXT_COLOR = opts.textColor ?? "#000"
   const SHOW_CAPTIONS = opts.showCaptions ?? true
 
@@ -79,7 +79,6 @@ export async function shareBookAsImage(
 
   if (navigator.canShare?.({ files: [file] })) {
     await navigator.share({
-      title: book.title,
       text: `Enjoy my Tiny Tales story "${book.title}"`,
       files: [file],
     })
