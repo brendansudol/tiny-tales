@@ -44,10 +44,12 @@ export function reducer(state: State, action: Action): State {
         }
       }
 
+      const pages = state.pages.filter((_, idx) => idx !== action.pageIndex)
+
       return {
         ...state,
-        pages: state.pages.filter((_, idx) => idx !== action.pageIndex),
-        pageIndex: Math.max(0, action.pageIndex - 1),
+        pages,
+        pageIndex: Math.min(action.pageIndex, pages.length - 1),
       }
     }
 
