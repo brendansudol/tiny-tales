@@ -3,6 +3,7 @@
 import { Edit, Share } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useSwipeable } from "react-swipeable"
 import { DeleteBookButton } from "@/components/book-delete-button"
 import { BookNavButtons } from "@/components/book-nav-buttons"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -20,6 +21,14 @@ export function BookViewer({ book }: Props) {
   const { pages } = book
   const currentPage = pages[pageIndex]
   const { caption, image } = currentPage ?? {}
+
+  const swipeHandlers = useSwipeable({
+    trackTouch: true,
+    trackMouse: false,
+    onSwipedLeft: () =>
+      setPageIndex((prev) => Math.min(prev + 1, pages.length - 1)),
+    onSwipedRight: () => setPageIndex((prev) => Math.max(prev - 1, 0)),
+  })
 
   useEffect(() => {
     // preload the current and next page images (for smoother navigation)
@@ -54,7 +63,10 @@ export function BookViewer({ book }: Props) {
       <Card className=" mb-4 p-0 relative">
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2 md:aspect-2/1">
-            <div className="max-sm:relative aspect-square bg-gray-100 card-inner-radius">
+            <div
+              className="max-sm:relative aspect-square bg-gray-100 card-inner-radius"
+              {...swipeHandlers}
+            >
               {image && (
                 <img
                   src={image}
