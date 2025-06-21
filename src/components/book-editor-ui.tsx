@@ -76,7 +76,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
     if (captionText.trim().length === 0 || isLoading(page.image)) return
 
     const updatePage = makePageUpdater(state.pageIndex)
-    updatePage({ image: asyncLoading() }, undefined)
+    updatePage({ image: asyncLoading() })
 
     try {
       const res = await fetch("/api/generate-image", {
@@ -102,7 +102,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
       formData.append("file", blob, "recording.webm")
 
       const updatePage = makePageUpdater(state.pageIndex)
-      updatePage({ caption: asyncLoading() }, undefined)
+      updatePage({ caption: asyncLoading() })
 
       try {
         const res = await fetch("/api/transcribe", { method: "POST", body: formData })
