@@ -19,7 +19,12 @@ type Action =
   | { type: "SET_PAGE_INDEX"; pageIndex: number }
   | { type: "ADD_PAGE" }
   | { type: "DELETE_PAGE"; pageIndex: number }
-  | { type: "UPDATE_PAGE"; pageIndex: number; payload: Partial<PageDraft> }
+  | {
+      type: "UPDATE_PAGE"
+      pageIndex: number
+      payload: Partial<PageDraft>
+      error?: string
+    }
 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -66,6 +71,7 @@ export function reducer(state: State, action: Action): State {
         pages: state.pages.map((page, idx) =>
           idx === action.pageIndex ? { ...page, ...action.payload } : page
         ),
+        error: action.error,
       }
 
     default:
@@ -85,6 +91,7 @@ export function getInitialState(book: Book, pageIndex: number): State {
           })),
     pageIndex: Math.max(0, Math.min(pageIndex, book.pages.length - 1)),
     title: book.title,
+    error: undefined,
   }
 }
 
