@@ -74,36 +74,36 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
   const handleGenerateImage = async () => {
     if (captionText.trim().length === 0 || isLoading(page.image)) return
 
-    const updatePage = makePageUpdater(state.pageIndex)
+    const { pageIndex } = state
+    const updatePage = makePageUpdater(pageIndex)
     updatePage({ image: asyncLoading() })
 
     try {
       const previousCaptions = state.pages
-        .slice(0, state.pageIndex)
+        .slice(0, pageIndex)
         .map((p) => getValue(p.caption, "").trim())
-        .filter(Boolean)
+        .filter((text) => text.length > 0)
         .slice(-3)
 
-      const promptParts: string[] = []
+      let prompt: string = captionText
+      // Add previous captions to the prompt if available
       if (previousCaptions.length > 0) {
+        const promptParts: string[] = []
         promptParts.push("Previous pages:")
         previousCaptions.forEach((text, idx) => {
-          const num = state.pageIndex - previousCaptions.length + idx + 1
+          const num = pageIndex - previousCaptions.length + idx + 1
           promptParts.push(`${num}. ${text}`)
         })
         promptParts.push("Current page:")
+        promptParts.push(captionText)
+        promptParts.push("Illustrate the current page scene in a consistent style.")
+        prompt = promptParts.join("\n")
       }
-      promptParts.push(captionText)
-      if (previousCaptions.length > 0) {
-        promptParts.push("Illustrate this scene in a consistent style.")
-      }
-
-      const finalPrompt = promptParts.join("\n")
 
       const res = await fetch("/api/generate-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: finalPrompt }),
+        body: JSON.stringify({ prompt }),
       })
       const data = await res.json()
       const imageUrl = data.url
