@@ -78,10 +78,32 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
     updatePage({ image: asyncLoading() })
 
     try {
+      const previousCaptions = state.pages
+        .slice(0, state.pageIndex)
+        .map((p) => getValue(p.caption, "").trim())
+        .filter(Boolean)
+        .slice(-3)
+
+      const promptParts: string[] = []
+      if (previousCaptions.length > 0) {
+        promptParts.push("Previous pages:")
+        previousCaptions.forEach((text, idx) => {
+          const num = state.pageIndex - previousCaptions.length + idx + 1
+          promptParts.push(`${num}. ${text}`)
+        })
+        promptParts.push("Current page:")
+      }
+      promptParts.push(captionText)
+      if (previousCaptions.length > 0) {
+        promptParts.push("Illustrate this scene in a consistent style.")
+      }
+
+      const finalPrompt = promptParts.join("\n")
+
       const res = await fetch("/api/generate-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: captionText }),
+        body: JSON.stringify({ prompt: finalPrompt }),
       })
       const data = await res.json()
       const imageUrl = data.url
