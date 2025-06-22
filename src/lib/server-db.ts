@@ -1,14 +1,15 @@
 import { Book } from "@/lib/types"
 import { v4 as uuid } from "uuid"
+import { Redis } from "@upstash/redis"
 
-const books = new Map<string, Book>()
+const redis = Redis.fromEnv()
 
-export function storeBook(book: Book): string {
+export async function storeBook(book: Book): Promise<string> {
   const id = uuid()
-  books.set(id, book)
+  await redis.set(id, book)
   return id
 }
 
-export function getStoredBook(id: string): Book | undefined {
-  return books.get(id)
+export async function getStoredBook(id: string): Promise<Book | undefined> {
+  return (await redis.get<Book>(id)) ?? undefined
 }
