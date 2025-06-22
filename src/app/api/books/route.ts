@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import { Book } from "@/lib/types"
 import { storeBook } from "@/lib/server-db"
+import { Book } from "@/lib/types"
 
 export const runtime = "nodejs"
 
