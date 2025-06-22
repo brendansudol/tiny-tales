@@ -9,4 +9,5 @@ export interface Book {
   title: string
   pages: Page[]
   createdAt: number
+  remoteId?: string
 }

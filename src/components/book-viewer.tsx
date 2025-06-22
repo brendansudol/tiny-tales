@@ -8,7 +8,7 @@ import { DeleteBookButton } from "@/components/book-delete-button"
 import { BookNavButtons } from "@/components/book-nav-buttons"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { shareBookAsImage } from "@/lib/share-book-image"
+import { shareBookOnline } from "@/lib/share-book-online"
 import { Book } from "@/lib/types"
 
 interface Props {
@@ -41,6 +41,17 @@ export function BookViewer({ book }: Props) {
         img.src = pages[i].image
       })
   }, [pageIndex, pages])
+
+  const handleShare = async () => {
+    const url = await shareBookOnline(book)
+    if (!url) return
+    if (navigator.share) {
+      await navigator.share({ url, title: book.title })
+    } else {
+      await navigator.clipboard.writeText(url)
+      alert("Link copied to clipboard")
+    }
+  }
 
   if (pages.length === 0) {
     return (
@@ -98,7 +109,7 @@ export function BookViewer({ book }: Props) {
       </Card>
 
       <div className="flex gap-3 items-center">
-        <Button variant="outline" aria-label="Share book" onClick={() => shareBookAsImage(book)}>
+        <Button variant="outline" aria-label="Share book" onClick={handleShare}>
           <Share className="mr-1" />
           <span>Share</span>
         </Button>
