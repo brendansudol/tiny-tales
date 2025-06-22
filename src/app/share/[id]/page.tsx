@@ -1,15 +1,18 @@
 import { notFound } from "next/navigation"
+import { use } from "react"
 import { BookViewer } from "@/components/book-viewer"
 import { Header } from "@/components/header"
 import { getStoredBook } from "@/lib/server-db"
 
 interface Props {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
-export default async function SharedBookPage({ params }: Props) {
-  const book = getStoredBook(params.id)
-  if (!book) return notFound()
+export default function SharedBookPage({ params }: Props) {
+  const { id } = use(params)
+  const book = getStoredBook(id)
+
+  if (book == null) return notFound()
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
