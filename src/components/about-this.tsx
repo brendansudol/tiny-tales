@@ -21,8 +21,8 @@ export function AboutThis() {
         <DialogDescription asChild>
           <div>
             <div className="mb-3">
-              Tiny Tales is a playful canvas for young storytellers. Kids speak their idea for each
-              page, and our friendly AI turns those words into pictures.
+              Tiny Tales is a small, playful space for young storytellers. Kids speak their idea for
+              each page, and our friendly AI turns those words into pictures.
             </div>
             <div className="mb-3">
               Every book lives only in this browser. Nothing is uploaded or shared unless you choose

@@ -12,7 +12,7 @@ export function AnnouncementBanner() {
 
   return (
     <div className="flex items-start justify-between gap-4 bg-yellow-100 text-yellow-900 p-4 mb-6 rounded-lg">
-      <p className="text-sm">👋 Turn your kid‘s stories into fun picture books in seconds.</p>
+      <p className="text-sm">👋 Turn stories into fun picture books in seconds.</p>
       <button
         type="button"
         className="flex-none p-[2px] hover:cursor-pointer"
