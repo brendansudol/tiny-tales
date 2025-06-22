@@ -17,7 +17,7 @@ export default function SharedBookPage({ params }: Props) {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <Header />
-      <BookViewer book={book} />
+      <BookViewer book={book} showActions={false} />
     </div>
   )
 }

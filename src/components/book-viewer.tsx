@@ -13,9 +13,10 @@ import { Book } from "@/lib/types"
 
 interface Props {
   book: Book
+  showActions?: boolean
 }
 
-export function BookViewer({ book }: Props) {
+export function BookViewer({ book, showActions = true }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
 
   const { pages } = book
@@ -108,21 +109,23 @@ export function BookViewer({ book }: Props) {
         </CardContent>
       </Card>
 
-      <div className="flex gap-3 items-center">
-        <Button variant="outline" aria-label="Share book" onClick={handleShare}>
-          <Share className="mr-1" />
-          <span>Share</span>
-        </Button>
-        <Link
-          href={`/books/${book.id}/edit?page=${pageIndex}`}
-          className={buttonVariants({ variant: "outline" })}
-        >
-          <Edit className="mr-1" />
-          <span className="sm:hidden">Change</span>
-          <span className="hidden sm:inline">Make changes</span>
-        </Link>
-        <DeleteBookButton id={book.id} />
-      </div>
+      {showActions && (
+        <div className="flex gap-3 items-center">
+          <Button variant="outline" aria-label="Share book" onClick={handleShare}>
+            <Share className="mr-1" />
+            <span>Share</span>
+          </Button>
+          <Link
+            href={`/books/${book.id}/edit?page=${pageIndex}`}
+            className={buttonVariants({ variant: "outline" })}
+          >
+            <Edit className="mr-1" />
+            <span className="sm:hidden">Change</span>
+            <span className="hidden sm:inline">Make changes</span>
+          </Link>
+          <DeleteBookButton id={book.id} />
+        </div>
+      )}
     </div>
   )
 }
