@@ -10,7 +10,7 @@ interface Props {
 
 export default function SharedBookPage({ params }: Props) {
   const { id } = use(params)
-  const book = getStoredBook(id)
+  const book = use(getStoredBook(id))
 
   if (book == null) return notFound()
 
