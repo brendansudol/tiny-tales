@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import { use } from "react"
 import { BookViewer } from "@/components/book-viewer"
 import { Header } from "@/components/header"
+import { SharedBookBanner } from "@/components/shared-book-banner"
 import { getStoredBook } from "@/lib/server-db"
 
 interface Props {
@@ -17,6 +18,7 @@ export default function SharedBookPage({ params }: Props) {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <Header />
+      <SharedBookBanner />
       <BookViewer book={book} />
     </div>
   )

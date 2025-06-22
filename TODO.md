@@ -1,2 +1,2 @@
 - remove / change buttons below book viewer for shared book
-- add special callout / message atop book on share page?
+- add special callout / message atop book on share page? ✅
