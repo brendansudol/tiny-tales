@@ -1,6 +1,7 @@
 "use client"
 
-import { Edit, Share } from "lucide-react"
+import { Edit, Share, Loader2 } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useSwipeable } from "react-swipeable"
@@ -9,6 +10,7 @@ import { BookNavButtons } from "@/components/book-nav-buttons"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { shareBookOnline } from "@/lib/share-book-online"
+import { cn } from "@/lib/utils"
 import { Book } from "@/lib/types"
 
 interface Props {
@@ -18,10 +20,15 @@ interface Props {
 
 export function BookViewer({ book, showActions = true }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
+  const [imageLoaded, setImageLoaded] = useState(false)
 
   const { pages } = book
   const currentPage = pages[pageIndex]
   const { caption, image } = currentPage ?? {}
+
+  useEffect(() => {
+    setImageLoaded(false)
+  }, [image])
 
   const swipeHandlers = useSwipeable({
     trackTouch: true,
@@ -76,15 +83,29 @@ export function BookViewer({ book, showActions = true }: Props) {
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2 md:aspect-2/1">
             <div
-              className="max-sm:relative aspect-square bg-gray-100 card-inner-radius"
+              className="relative aspect-square bg-gray-100 card-inner-radius"
               {...swipeHandlers}
             >
               {image && (
-                <img
-                  src={image}
-                  alt={caption}
-                  className="w-full h-full object-cover card-inner-radius"
-                />
+                <>
+                  <Image
+                    key={image}
+                    src={image}
+                    alt={caption}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className={cn(
+                      "object-cover card-inner-radius transition-opacity",
+                      imageLoaded ? "opacity-100" : "opacity-0"
+                    )}
+                    onLoadingComplete={() => setImageLoaded(true)}
+                  />
+                  {!imageLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center card-inner-radius bg-gray-100">
+                      <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+                    </div>
+                  )}
+                </>
               )}
               <BookNavButtons
                 prevDisabled={pageIndex === 0}
