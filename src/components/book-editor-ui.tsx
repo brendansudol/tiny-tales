@@ -27,6 +27,7 @@ import {
   isLoading,
 } from "@/lib/async-data"
 import { upsertBook } from "@/lib/storage"
+import { updateBookOnline } from "@/lib/share-book-online"
 import { Book } from "@/lib/types"
 
 export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: number }) {
@@ -56,8 +57,8 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
     })
   }
 
-  const handleSaveBook = () => {
-    upsertBook({
+  const handleSaveBook = async () => {
+    const updatedBook = {
       ...book,
       title: state.title,
       pages: state.pages
@@ -67,7 +68,12 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
           image: getValue(page.image, ""),
         }))
         .filter((page) => page.caption || page.image),
-    })
+    }
+
+    upsertBook(updatedBook)
+    if (book.remoteId) {
+      await updateBookOnline(updatedBook)
+    }
 
     router.push(`/books/${book.id}?celebrate=1`)
   }

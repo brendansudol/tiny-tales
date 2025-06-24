@@ -13,3 +13,7 @@ export async function storeBook(book: Book): Promise<string> {
 export async function getStoredBook(id: string): Promise<Book | undefined> {
   return (await redis.get<Book>(id)) ?? undefined
 }
+
+export async function updateStoredBook(id: string, book: Book): Promise<void> {
+  await redis.set(id, book)
+}
