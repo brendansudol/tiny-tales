@@ -1,15 +1,18 @@
 "use client"
 
-import { Edit, Share } from "lucide-react"
+import { Edit, Share, Loader2 } from "lucide-react"
+import ImageComponent from "next/image"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useSwipeable } from "react-swipeable"
 import { DeleteBookButton } from "@/components/book-delete-button"
 import { BookNavButtons } from "@/components/book-nav-buttons"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { shareBookOnline } from "@/lib/share-book-online"
+import { cn } from "@/lib/utils"
 import { Book } from "@/lib/types"
+import { usePageImageLoader } from "@/hooks/usePageImageLoader"
 
 interface Props {
   book: Book
@@ -23,6 +26,8 @@ export function BookViewer({ book, showActions = true }: Props) {
   const currentPage = pages[pageIndex]
   const { caption, image } = currentPage ?? {}
 
+  const { imageLoaded, markImageLoaded } = usePageImageLoader(pages, pageIndex)
+
   const swipeHandlers = useSwipeable({
     trackTouch: true,
     trackMouse: false,
@@ -30,17 +35,6 @@ export function BookViewer({ book, showActions = true }: Props) {
     onSwipedRight: () => setPageIndex((prev) => Math.max(prev - 1, 0)),
   })
 
-  useEffect(() => {
-    // preload the current and next page images (for smoother navigation)
-    const currentAndNextPages = [pageIndex, pageIndex + 1]
-    currentAndNextPages
-      .filter((i) => i < pages.length && pages[i].image.length > 0) // stay in-bounds
-      .forEach((i) => {
-        const img = new Image()
-        img.crossOrigin = "anonymous"
-        img.src = pages[i].image
-      })
-  }, [pageIndex, pages])
 
   const handleShare = async () => {
     const url = await shareBookOnline(book)
@@ -75,15 +69,29 @@ export function BookViewer({ book, showActions = true }: Props) {
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2 md:aspect-2/1">
             <div
-              className="max-sm:relative aspect-square bg-gray-100 card-inner-radius"
+              className="relative aspect-square bg-gray-100 card-inner-radius"
               {...swipeHandlers}
             >
               {image && (
-                <img
-                  src={image}
-                  alt={caption}
-                  className="w-full h-full object-cover card-inner-radius"
-                />
+                <>
+                  <ImageComponent
+                    key={image}
+                    src={image}
+                    alt={caption}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className={cn(
+                      "object-cover card-inner-radius transition-opacity",
+                      imageLoaded ? "opacity-100" : "opacity-0"
+                    )}
+                    onLoadingComplete={() => markImageLoaded(image ?? "")}
+                  />
+                  {!imageLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center card-inner-radius bg-gray-100">
+                      <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+                    </div>
+                  )}
+                </>
               )}
               <BookNavButtons
                 prevDisabled={pages.length <= 1}
