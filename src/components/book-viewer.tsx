@@ -87,8 +87,12 @@ export function BookViewer({ book, showActions = true }: Props) {
                 />
               )}
               <BookNavButtons
-                prevDisabled={pageIndex === 0}
-                prevOnClick={() => setPageIndex((prev) => prev - 1)}
+                prevDisabled={pages.length <= 1}
+                prevOnClick={() =>
+                  setPageIndex((prev) =>
+                    prev === 0 ? pages.length - 1 : prev - 1,
+                  )
+                }
                 nextDisabled={pageIndex === pages.length - 1}
                 nextOnClick={() => setPageIndex((prev) => prev + 1)}
               />

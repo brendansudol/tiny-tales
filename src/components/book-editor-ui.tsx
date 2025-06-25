@@ -234,8 +234,16 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
         </Card>
 
         <BookNavButtons
-          prevDisabled={state.pageIndex === 0 || isRecording}
-          prevOnClick={() => dispatch({ type: "SET_PAGE_INDEX", pageIndex: state.pageIndex - 1 })}
+          prevDisabled={state.pages.length <= 1 || isRecording}
+          prevOnClick={() =>
+            dispatch({
+              type: "SET_PAGE_INDEX",
+              pageIndex:
+                state.pageIndex === 0
+                  ? state.pages.length - 1
+                  : state.pageIndex - 1,
+            })
+          }
           nextDisabled={(isLastPage && isPageEmpty(page)) || isRecording}
           nextOnClick={() => {
             if (isLastPage) {
