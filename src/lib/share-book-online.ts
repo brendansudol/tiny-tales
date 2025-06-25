@@ -20,7 +20,7 @@ export async function shareBookOnline(book: Book): Promise<string | undefined> {
 }
 
 export async function updateBookOnline(book: Book): Promise<void> {
-  if (!book.remoteId) return
+  if (book.remoteId == null) return
   try {
     await fetch(`/api/books/${book.remoteId}`, {
       method: "PUT",

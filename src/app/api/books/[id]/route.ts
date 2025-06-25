@@ -7,14 +7,13 @@ export const runtime = "nodejs"
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const book = await getStoredBook(id)
-
   if (book == null) return NextResponse.json({ error: "Not found" }, { status: 404 })
   else return NextResponse.json(book)
 }
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const book = (await req.json()) as Book
-  await updateStoredBook(id, book)
+  const book = await req.json()
+  await updateStoredBook(id, book as Book)
   return NextResponse.json({ ok: true })
 }

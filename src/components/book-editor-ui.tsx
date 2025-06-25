@@ -40,10 +40,9 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
   const captionText = getValue(page.caption, "")
   const imageUrl = getValue(page.image)
 
-  const makePageUpdater =
-    (idx: number) => (payload: Partial<PageDraft>, error?: string) => {
-      dispatch({ type: "UPDATE_PAGE", pageIndex: idx, payload, error })
-    }
+  const makePageUpdater = (idx: number) => (payload: Partial<PageDraft>, error?: string) => {
+    dispatch({ type: "UPDATE_PAGE", pageIndex: idx, payload, error })
+  }
 
   const handleDeleteCurrentPage = () => {
     dispatch({ type: "DELETE_PAGE", pageIndex: state.pageIndex })
@@ -71,7 +70,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
     }
 
     upsertBook(updatedBook)
-    if (book.remoteId) {
+    if (book.remoteId != null) {
       await updateBookOnline(updatedBook)
     }
 
@@ -117,10 +116,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
       updatePage({ image: asyncLoaded(imageUrl) })
     } catch (error) {
       console.error("Image generation fail", error)
-      updatePage(
-        { image: asyncFailedToLoad("Image generation failed") },
-        "Image generation failed"
-      )
+      updatePage({ image: asyncFailedToLoad("Image generation failed") }, "Image generation failed")
     }
   }
 
@@ -139,10 +135,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
         updatePage({ caption: asyncLoaded(transcript) })
       } catch (error) {
         console.error("Transcription fail", error)
-        updatePage(
-          { caption: asyncFailedToLoad("Transcription failed") },
-          "Transcription failed"
-        )
+        updatePage({ caption: asyncFailedToLoad("Transcription failed") }, "Transcription failed")
       }
     },
   })
