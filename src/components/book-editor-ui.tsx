@@ -4,7 +4,7 @@ import { Loader2, ImagePlus, BookText, SquarePlus, Settings2 } from "lucide-reac
 import { useRouter } from "next/navigation"
 import { useReducer } from "react"
 import { AsyncImage } from "@/components/async-image"
-import { getInitialState, PageDraft, reducer } from "@/components/book-editor-state"
+import { getInitialState, isPageEmpty, PageDraft, reducer } from "@/components/book-editor-state"
 import { BookNavButtons } from "@/components/book-nav-buttons"
 import { EditableText } from "@/components/editable-text"
 import { RecordButton } from "@/components/record-button"
@@ -34,6 +34,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
   const router = useRouter()
 
   const [state, dispatch] = useReducer(reducer, getInitialState(book, pageIndex))
+  const isLastPage = state.pageIndex === state.pages.length - 1
   const page = state.pages[state.pageIndex]
   const isLoadingTranscript = isLoading(page.caption)
   const { isLoading: isLoadingImage, startedAt } = getLoadingInfo(page.image)
@@ -235,8 +236,17 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
         <BookNavButtons
           prevDisabled={state.pageIndex === 0 || isRecording}
           prevOnClick={() => dispatch({ type: "SET_PAGE_INDEX", pageIndex: state.pageIndex - 1 })}
-          nextDisabled={state.pageIndex === state.pages.length - 1 || isRecording}
-          nextOnClick={() => dispatch({ type: "SET_PAGE_INDEX", pageIndex: state.pageIndex + 1 })}
+          nextDisabled={(isLastPage && isPageEmpty(page)) || isRecording}
+          nextOnClick={() => {
+            if (isLastPage) {
+              dispatch({ type: "ADD_PAGE" })
+            } else {
+              dispatch({
+                type: "SET_PAGE_INDEX",
+                pageIndex: state.pageIndex + 1,
+              })
+            }
+          }}
         />
       </div>
 
