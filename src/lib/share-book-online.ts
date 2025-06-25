@@ -18,3 +18,16 @@ export async function shareBookOnline(book: Book): Promise<string | undefined> {
     console.error("shareBookOnline", err)
   }
 }
+
+export async function updateBookOnline(book: Book): Promise<void> {
+  if (book.remoteId == null) return
+  try {
+    await fetch(`/api/books/${book.remoteId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(book),
+    })
+  } catch (err) {
+    console.error("updateBookOnline", err)
+  }
+}
