@@ -26,7 +26,6 @@ import {
   getValue,
   isLoading,
 } from "@/lib/async-data"
-import { isPageEmpty } from "@/lib/is-page-empty"
 import { upsertBook } from "@/lib/storage"
 import { Book } from "@/lib/types"
 
@@ -40,10 +39,9 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
   const captionText = getValue(page.caption, "")
   const imageUrl = getValue(page.image)
 
-  const makePageUpdater =
-    (idx: number) => (payload: Partial<PageDraft>, error?: string) => {
-      dispatch({ type: "UPDATE_PAGE", pageIndex: idx, payload, error })
-    }
+  const makePageUpdater = (idx: number) => (payload: Partial<PageDraft>, error?: string) => {
+    dispatch({ type: "UPDATE_PAGE", pageIndex: idx, payload, error })
+  }
 
   const handleDeleteCurrentPage = () => {
     dispatch({ type: "DELETE_PAGE", pageIndex: state.pageIndex })
@@ -61,14 +59,14 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
     upsertBook({
       ...book,
       title: state.title,
-        pages: state.pages
-          .map((page) => ({
-            ...page,
-            caption: getValue(page.caption, "").trim(),
-            image: getValue(page.image, ""),
-          }))
-          .filter((page) => !isPageEmpty(page)),
-      })
+      pages: state.pages
+        .map((page) => ({
+          ...page,
+          caption: getValue(page.caption, "").trim(),
+          image: getValue(page.image, ""),
+        }))
+        .filter((page) => page.caption || page.image),
+    })
 
     router.push(`/books/${book.id}?celebrate=1`)
   }
@@ -112,10 +110,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
       updatePage({ image: asyncLoaded(imageUrl) })
     } catch (error) {
       console.error("Image generation fail", error)
-      updatePage(
-        { image: asyncFailedToLoad("Image generation failed") },
-        "Image generation failed"
-      )
+      updatePage({ image: asyncFailedToLoad("Image generation failed") }, "Image generation failed")
     }
   }
 
@@ -134,10 +129,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
         updatePage({ caption: asyncLoaded(transcript) })
       } catch (error) {
         console.error("Transcription fail", error)
-        updatePage(
-          { caption: asyncFailedToLoad("Transcription failed") },
-          "Transcription failed"
-        )
+        updatePage({ caption: asyncFailedToLoad("Transcription failed") }, "Transcription failed")
       }
     },
   })
