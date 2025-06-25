@@ -105,16 +105,16 @@ export function getInitialState(book: Book, pageIndex: number): State {
   }
 }
 
+export function isPageEmpty(page: PageDraft): boolean {
+  const caption = getValue(page.caption, "").trim()
+  const image = getValue(page.image, "").trim()
+  return caption === "" && image === ""
+}
+
 function createEmptyPage(): PageDraft {
   return {
     id: uuid(),
     caption: asyncNotStarted(),
     image: asyncNotStarted(),
   }
-}
-
-function isPageEmpty(page: PageDraft): boolean {
-  const caption = getValue(page.caption, "").trim()
-  const image = getValue(page.image, "").trim()
-  return caption === "" && image === ""
 }
