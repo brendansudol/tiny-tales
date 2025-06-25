@@ -26,6 +26,7 @@ import {
   getValue,
   isLoading,
 } from "@/lib/async-data"
+import { isPageEmpty } from "@/lib/is-page-empty"
 import { upsertBook } from "@/lib/storage"
 import { Book } from "@/lib/types"
 
@@ -60,14 +61,14 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
     upsertBook({
       ...book,
       title: state.title,
-      pages: state.pages
-        .map((page) => ({
-          ...page,
-          caption: getValue(page.caption, "").trim(),
-          image: getValue(page.image, ""),
-        }))
-        .filter((page) => page.caption || page.image),
-    })
+        pages: state.pages
+          .map((page) => ({
+            ...page,
+            caption: getValue(page.caption, "").trim(),
+            image: getValue(page.image, ""),
+          }))
+          .filter((page) => !isPageEmpty(page)),
+      })
 
     router.push(`/books/${book.id}?celebrate=1`)
   }

@@ -1,5 +1,10 @@
 import { v4 as uuid } from "uuid"
-import { AsyncData, asyncLoaded, asyncNotStarted } from "@/lib/async-data"
+import {
+  AsyncData,
+  asyncLoaded,
+  asyncNotStarted,
+} from "@/lib/async-data"
+import { isPageEmpty } from "@/lib/is-page-empty"
 import { Book, Page } from "@/lib/types"
 
 export interface PageDraft extends Omit<Page, "caption" | "image"> {
@@ -58,12 +63,22 @@ export function reducer(state: State, action: Action): State {
       }
     }
 
-    case "ADD_PAGE":
+    case "ADD_PAGE": {
+      const lastPage = state.pages[state.pages.length - 1]
+
+      if (isPageEmpty(lastPage)) {
+        return {
+          ...state,
+          pageIndex: state.pages.length - 1,
+        }
+      }
+
       return {
         ...state,
         pages: [...state.pages, createEmptyPage()],
         pageIndex: state.pages.length,
       }
+    }
 
     case "UPDATE_PAGE":
       return {
