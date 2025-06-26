@@ -9,10 +9,10 @@ import { DeleteBookButton } from "@/components/book-delete-button"
 import { BookNavButtons } from "@/components/book-nav-buttons"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { shareBookOnline } from "@/lib/share-book-online"
-import { cn } from "@/lib/utils"
-import { Book } from "@/lib/types"
 import { usePageImageLoader } from "@/hooks/usePageImageLoader"
+import { shareBookOnline } from "@/lib/share-book-online"
+import { Book } from "@/lib/types"
+import { cn } from "@/lib/utils"
 
 interface Props {
   book: Book
@@ -26,7 +26,7 @@ export function BookViewer({ book, showActions = true }: Props) {
   const currentPage = pages[pageIndex]
   const { caption, image } = currentPage ?? {}
 
-  const { imageLoaded, markImageLoaded } = usePageImageLoader(pages, pageIndex)
+  const { isImageLoaded, markImageLoaded } = usePageImageLoader(pages, pageIndex)
 
   const swipeHandlers = useSwipeable({
     trackTouch: true,
@@ -34,7 +34,6 @@ export function BookViewer({ book, showActions = true }: Props) {
     onSwipedLeft: () => setPageIndex((prev) => Math.min(prev + 1, pages.length - 1)),
     onSwipedRight: () => setPageIndex((prev) => Math.max(prev - 1, 0)),
   })
-
 
   const handleShare = async () => {
     const url = await shareBookOnline(book)
@@ -65,33 +64,32 @@ export function BookViewer({ book, showActions = true }: Props) {
     <div className="space-y-3">
       <div className="font-bold text-lg">{book.title || "(Untitled)"}</div>
 
-      <Card className=" mb-4 p-0 relative">
+      <Card className="mb-4 p-0 relative">
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2 md:aspect-2/1">
             <div
-              className="relative aspect-square bg-gray-100 card-inner-radius"
+              className="max-sm:relative aspect-square bg-gray-100 card-inner-radius"
               {...swipeHandlers}
             >
               {image && (
-                <>
+                <div className="relative w-full h-full">
                   <ImageComponent
                     key={image}
-                    src={image}
                     alt={caption}
-                    fill
-                    sizes="(min-width: 768px) 50vw, 100vw"
                     className={cn(
                       "object-cover card-inner-radius transition-opacity",
-                      imageLoaded ? "opacity-100" : "opacity-0"
+                      isImageLoaded ? "opacity-100" : "opacity-0"
                     )}
-                    onLoadingComplete={() => markImageLoaded(image ?? "")}
+                    fill={true}
+                    onLoad={() => markImageLoaded(image)}
+                    src={image}
                   />
-                  {!imageLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center card-inner-radius bg-gray-100">
+                  {!isImageLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center card-inner-radius">
                       <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
                     </div>
                   )}
-                </>
+                </div>
               )}
               <BookNavButtons
                 prevDisabled={pages.length <= 1}

@@ -1,26 +1,24 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Page } from "@/lib/types"
 
 export function usePageImageLoader(pages: Page[], pageIndex: number) {
-  const [imageLoaded, setImageLoaded] = useState(false)
+  const [isImageLoaded, setIsImageLoaded] = useState(false)
   const loadedImages = useRef(new Set<string>())
 
   const image = pages[pageIndex]?.image
 
   useEffect(() => {
-    if (image) {
-      setImageLoaded(loadedImages.current.has(image))
-    } else {
-      setImageLoaded(false)
-    }
+    if (image) setIsImageLoaded(loadedImages.current.has(image))
+    else setIsImageLoaded(false)
   }, [image])
 
   useEffect(() => {
-    const indices = [pageIndex, pageIndex + 1]
-    indices
-      .filter((i) => i < pages.length && pages[i].image.length > 0)
+    // preload the current and next page images (for smoother navigation)
+    const currentAndNextPages = [pageIndex, pageIndex + 1]
+    currentAndNextPages
+      .filter((i) => i < pages.length && pages[i].image.length > 0) // stay in-bounds
       .forEach((i) => {
         const src = pages[i].image
         if (loadedImages.current.has(src)) return
@@ -31,10 +29,13 @@ export function usePageImageLoader(pages: Page[], pageIndex: number) {
       })
   }, [pageIndex, pages])
 
-  const markImageLoaded = (src: string) => {
+  const markImageLoaded = useCallback((src: string) => {
     loadedImages.current.add(src)
-    setImageLoaded(true)
-  }
+    setIsImageLoaded(true)
+  }, [])
 
-  return { imageLoaded, markImageLoaded }
+  return {
+    isImageLoaded,
+    markImageLoaded,
+  }
 }
