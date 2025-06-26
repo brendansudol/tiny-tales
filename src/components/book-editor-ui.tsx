@@ -26,8 +26,8 @@ import {
   getValue,
   isLoading,
 } from "@/lib/async-data"
-import { upsertBook } from "@/lib/storage"
 import { updateBookOnline } from "@/lib/share-book-online"
+import { upsertBook } from "@/lib/storage"
 import { Book } from "@/lib/types"
 
 export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: number }) {
