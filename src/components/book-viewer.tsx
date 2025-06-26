@@ -26,8 +26,7 @@ export function BookViewer({ book, showActions = true }: Props) {
   const swipeHandlers = useSwipeable({
     trackTouch: true,
     trackMouse: false,
-    onSwipedLeft: () =>
-      setPageIndex((prev) => Math.min(prev + 1, pages.length - 1)),
+    onSwipedLeft: () => setPageIndex((prev) => Math.min(prev + 1, pages.length - 1)),
     onSwipedRight: () => setPageIndex((prev) => Math.max(prev - 1, 0)),
   })
 
@@ -89,9 +88,7 @@ export function BookViewer({ book, showActions = true }: Props) {
               <BookNavButtons
                 prevDisabled={pages.length <= 1}
                 prevOnClick={() =>
-                  setPageIndex((prev) =>
-                    prev === 0 ? pages.length - 1 : prev - 1,
-                  )
+                  setPageIndex((prev) => (prev === 0 ? pages.length - 1 : prev - 1))
                 }
                 nextDisabled={pageIndex === pages.length - 1}
                 nextOnClick={() => setPageIndex((prev) => prev + 1)}

@@ -238,10 +238,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
           prevOnClick={() =>
             dispatch({
               type: "SET_PAGE_INDEX",
-              pageIndex:
-                state.pageIndex === 0
-                  ? state.pages.length - 1
-                  : state.pageIndex - 1,
+              pageIndex: state.pageIndex === 0 ? state.pages.length - 1 : state.pageIndex - 1,
             })
           }
           nextDisabled={(isLastPage && isPageEmpty(page)) || isRecording}
