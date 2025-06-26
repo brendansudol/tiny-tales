@@ -13,13 +13,15 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     rules: {
-      "sort-imports": [
+      "import/order": [
         "error",
         {
-          ignoreCase: true,
-          ignoreDeclarationSort: false,
-          ignoreMemberSort: false,
-          memberSyntaxSortOrder: ["none", "all", "multiple", "single"],
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+          "newlines-between": "never",
+          groups: [["builtin", "external"], ["internal"], ["parent", "sibling", "index"]],
         },
       ],
       "@typescript-eslint/no-unused-vars": [

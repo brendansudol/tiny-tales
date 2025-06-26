@@ -1,5 +1,5 @@
-import { experimental_transcribe as transcribe } from "ai"
 import { openai } from "@ai-sdk/openai"
+import { experimental_transcribe as transcribe } from "ai"
 import { NextResponse } from "next/server"
 
 export const runtime = "edge"

@@ -1,6 +1,6 @@
-import { Book } from "@/lib/types"
-import { v4 as uuid } from "uuid"
 import { Redis } from "@upstash/redis"
+import { v4 as uuid } from "uuid"
+import { Book } from "@/lib/types"
 
 const redis = Redis.fromEnv()
 
