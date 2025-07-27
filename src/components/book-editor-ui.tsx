@@ -92,7 +92,10 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
         .filter((text) => text.length > 0)
         .slice(-3)
 
-      let prompt: string = captionText
+      const textlessInstruction =
+        "Illustrate the current page scene in a consistent style. Unless the caption explicitly requests it, do not include captions or any text in the image."
+
+      let prompt: string = `${captionText}\n${textlessInstruction}`
       // Add previous captions to the prompt if available
       if (previousCaptions.length > 0) {
         const promptParts: string[] = []
@@ -103,7 +106,7 @@ export function BookEditor({ book, pageIndex = 0 }: { book: Book; pageIndex?: nu
         })
         promptParts.push("Current page:")
         promptParts.push(captionText)
-        promptParts.push("Illustrate the current page scene in a consistent style.")
+        promptParts.push(textlessInstruction)
         prompt = promptParts.join("\n")
       }
 
